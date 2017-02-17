@@ -12,7 +12,8 @@ const gulp = require('gulp'),
     tsConfig = require(conf.paths.tsConfig),
     inlineNg2Template = require('gulp-inline-ng2-template'),
     gulpSequence = require('gulp-sequence'),
-    browserSync = require("browser-sync");
+    browserSync = require("browser-sync"),
+    rsync = require("gulp-rsync");
 
 const IS_PRODUCTION = true;  // use yor ENV variable here instead of true/false
 
@@ -75,9 +76,26 @@ gulp.task('watch', function () {
   gulp.watch(conf.paths.assets, ['copy:assets']);
 });
 
+gulp.task('rsync', ['build', 'dependencies'], function() {
+  return gulp.src(conf.paths.dist)
+    .pipe(rsync({
+      root: conf.paths.dist,
+      username: 'root',
+      hostname: conf.deploy.target_ip,
+      port: conf.deploy.port,
+      recursive: true,
+      archive: true,
+      compress: true,
+      progress: false,
+      destination: conf.deploy.dir
+    }));
+});
+
 gulp.task('dependencies', ['copy:node_modules', 'copy:bower_components']);
 
 gulp.task('build', ['index', 'compile', 'static', 'copy:assets']);
+
+gulp.task('deploy', ['rsync']);
 
 gulp.task('serve', function () {
   browserSync.init({
