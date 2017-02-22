@@ -7,7 +7,8 @@ const http = require("http").Server(app);
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const WebSocketServer = require("ws").Server;
-const wss = new WebSocketServer({server: http});
+const protos = [ "x-afb-ws-json1" ];
+const wss = new WebSocketServer({server: http}, protos);
 let connections = [];
 
 function checkAuth(req, res, next) {
