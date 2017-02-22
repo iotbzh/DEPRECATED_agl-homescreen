@@ -39,7 +39,7 @@ gulp.task('compile', function () {
       .pipe(sourcemaps.init())
       .pipe(inlineNg2Template(conf.inlineTemplate))
       .pipe(ts(tsConfig.compilerOptions))
-      .pipe(uglify())
+      //FIXME: currently prevent debugging .pipe(uglify())
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest(conf.paths.dist))
       .pipe(browserSync.stream());
@@ -76,26 +76,29 @@ gulp.task('watch', function () {
   gulp.watch(conf.paths.assets, ['copy:assets']);
 });
 
-gulp.task('rsync', ['build', 'dependencies'], function() {
+gulp.task('dependencies', gulp.series(['copy:node_modules', 'copy:bower_components']));
+
+gulp.task('build', gulp.series(['index', 'compile', 'static', 'copy:assets']));
+
+gulp.task('rsync', function() {
   return gulp.src(conf.paths.dist)
     .pipe(rsync({
       root: conf.paths.dist,
       username: 'root',
       hostname: conf.deploy.target_ip,
       port: conf.deploy.port,
-      recursive: true,
       archive: true,
+      recursive: true,
       compress: true,
       progress: false,
+      incremental: true,
       destination: conf.deploy.dir
     }));
 });
 
-gulp.task('dependencies', ['copy:node_modules', 'copy:bower_components']);
+gulp.task('deploy', gulp.series(['build', 'dependencies', 'rsync']));
 
-gulp.task('build', ['index', 'compile', 'static', 'copy:assets']);
-
-gulp.task('deploy', ['rsync']);
+gulp.task('deployts', gulp.series(['build', 'rsync']));
 
 gulp.task('serve', function () {
   browserSync.init({

@@ -21,8 +21,9 @@ module.exports = {
       './node_modules/ng2-translate/bundles/**/*'
     ],
 
-    dist: './build'
+    dist: './dist'
   },
+
   deploy: {
     target_ip: '127.0.0.1',
     port: '4444',
