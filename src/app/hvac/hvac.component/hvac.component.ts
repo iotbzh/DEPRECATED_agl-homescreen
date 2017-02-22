@@ -8,8 +8,9 @@ import {WebSocketHandler} from "../../shared/WebSocketHandler";
   styleUrls: ['hvac.component.css']
 })
 export class HvacComponent implements OnInit, OnDestroy, WebSocketHandler {
-  private url: string = environment.service.api;
+  private url: string;
   private socket;
+  private ws_sub_protos: [ "x-afb-ws-json1" ];
   private leftFront: number = 0;
   private leftRear: number = 0;
   private rightFront: number = 0;
@@ -18,11 +19,15 @@ export class HvacComponent implements OnInit, OnDestroy, WebSocketHandler {
   private mileage: number = 0;
 
   constructor() {
+    this.url = 'ws://' + environment.service.ip;
+    if (environment.service.port)
+        this.url += ':' + environment.service.port;
+    this.url += environment.service.api_url;
   }
 
   //@todo Add listeners to listen api-methods and implement your logic here
   ngOnInit() {
-    this.socket = new WebSocket(this.url);
+    this.socket = new WebSocket(this.url, this.ws_sub_protos);
     this.socket.onopen = this.onWSOpen.bind(this);
     this.socket.onclose = this.onWSClose.bind(this);
     this.socket.onmessage = this.onWSMessageReceive.bind(this);

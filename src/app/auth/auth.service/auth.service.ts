@@ -13,7 +13,7 @@ import {environment} from '../../../environments/environment';
 @Injectable()
 export class AuthService {
 
-  private url: string = environment.service.api;
+  private url: string;
   public token: string;
   public username: string;
   public language: string;
@@ -22,6 +22,11 @@ export class AuthService {
     // set token if saved in local storage
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
+
+    this.url = 'http://' + environment.service.ip;
+    if (environment.service.port)
+        this.url += ':' + environment.service.port;
+    this.url += environment.service.api_url;
   }
 
   public login(username, password): Observable<string> {

@@ -8,6 +8,11 @@ if (environment.production) {
   enableProdMode();
 }
 
+if (environment.service.ip == null)
+    environment.service.ip = window.location.hostname;
+if (environment.service.port == null)
+    environment.service.port = window.location.port;
+
 platformBrowserDynamic().bootstrapModule(AppModule)
     .then(function () {
       console.log("App is Booted");

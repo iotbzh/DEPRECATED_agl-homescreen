@@ -8,12 +8,16 @@ import {AglIdentityService} from "../../shared/aglIdentity.service";
   styleUrls: ['event-emitter.component.css']
 })
 export class EventEmitterComponent implements OnInit, OnDestroy {
-  // private url: string = environment.service.api;
+  private url: string;
   // private socket;
   private name: string;
   private language: string = "";
 
   constructor(private aglIdentityService: AglIdentityService) {
+    this.url = 'ws://' + environment.service.ip;
+    if (environment.service.port)
+        this.url += ':' + environment.service.port;
+    this.url += environment.service.api_url;
   }
 
   ngOnInit() {
