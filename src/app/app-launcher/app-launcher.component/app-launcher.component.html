@@ -6,13 +6,13 @@
   <div class="row">
 
     <div class="small-4 columns" *ngFor="let item of runnables; let i = index;">
-      <div class="app-launcher {{item.id}}" [ngClass]="{'is-pressed': item.isPressed, 'is-running': item.isRunning}" (click)="runApp($event, item)"
+      <div class="app-launcher {{item.name}}" [ngClass]="{'is-pressed': item.isPressed, 'is-running': item.isRunning}" (click)="runApp($event, item)"
            (mouseup)="item.isPressed=false"
            (mousedown)="item.isPressed=true">
         <!--(touchstart)="item.isPressed=true"-->
         <!--(touchend)="item.isPressed=false"-->
       </div>
-      <h5>{{"APPS." + item.id | uppercase | translate}}</h5>
+      <h5>{{"APPS." + item.name | uppercase | translate | removeAppsPrefix}}</h5>
     </div>
 
   </div>

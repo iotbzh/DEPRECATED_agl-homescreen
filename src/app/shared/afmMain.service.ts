@@ -37,7 +37,7 @@ export class AfmMainService {
         this.webSocketService.sendMessage(
             JSON.stringify({
                 api: "afm-main/start",
-                appId: app.id
+                id: app.id
             })
         );
     }
