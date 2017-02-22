@@ -25,6 +25,7 @@ import {UserBarComponent} from "./shared/user-bar.component/user-bar.component";
 import {WebSocketService} from "./shared/websocket.service";
 import {AglIdentityService} from "./shared/aglIdentity.service";
 import {AfmMainService} from "./shared/afmMain.service";
+import {RemoveAppsPrefixPipe} from './remove-apps-prefix.pipe';
 
 @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import {AfmMainService} from "./shared/afmMain.service";
     SettingsWifiComponent,
     SettingsDatetimeComponent,
     EventEmitterComponent,
-    UserBarComponent
+    UserBarComponent,
+    RemoveAppsPrefixPipe
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
