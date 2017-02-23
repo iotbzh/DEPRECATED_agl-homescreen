@@ -3,7 +3,7 @@ export const environment: any = {
 
     session: { // Those data are updated by session service
         initial: '123456789',  // typical dev initial token
-        timeout: 3600,         // timeout is updated client session context creation
+        timeout: 60*60,        // timeout is updated client session context creation
         pingrate: 30           // Ping rate to check if server is still alive
     },
 

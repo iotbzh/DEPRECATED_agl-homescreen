@@ -2,9 +2,9 @@ export const environment: any = {
     production: false,
 
     session: { // Those data are updated by session service
-        initial: '123456789',  // typical dev initial token
-        timeout: 3600,         // timeout is updated client session context creation
-        pingrate: 30           // Ping rate to check if server is still alive
+        initial: '123456789',   // typical dev initial token
+        timeout: 60 * 60,       // session context timeout (token will be refreshed before that timeout)
+        pingrate: 30,           // Ping rate to check if server is still alive -- FIXME: not used for now
     },
 
     service: {

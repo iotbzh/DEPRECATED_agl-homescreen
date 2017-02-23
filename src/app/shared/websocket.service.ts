@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Subject, Subscription, Observable } from 'rxjs/Rx';
 import { WebSocketSubject } from "rxjs/observable/dom/WebSocketSubject";
 import { environment } from "../../environments/environment";
+import { AfbContextService } from "./afbContext.service";
 
 @Injectable()
 export class WebSocketService {
@@ -15,19 +16,18 @@ export class WebSocketService {
     private ws: WebSocketSubject<Object>;
     private socket: Subscription;
     private url: string;
-    private afbCtx;
+    private afbCtx: AfbContextService;
     private reqId = 0;
 
     public message: Subject<Object> = new Subject();
     public opened: Subject<boolean> = new Subject<boolean>();
 
     constructor() {
-        let initialToken = environment.session.initial;
         this.url = 'ws://' + environment.service.ip;
         if (environment.service.port)
             this.url += ':' + environment.service.port;
         this.url += environment.service.api_url;
-        this.afbCtx = { token: initialToken, uuid: undefined };
+        this.afbCtx = new AfbContextService(this, environment.session);
     };
 
     public close(): void {
@@ -48,7 +48,7 @@ export class WebSocketService {
         // FIXME: do we still need to manage id to process resolve, reject callbacks ???
         this.reqId += 1;
         let data = JSON.stringify([this.CALL, this.reqId, method, request]);
-        //console.log('DEBUG SEND: ' + data);
+        //console.debug('DEBUG SEND: ' + data);
         this.ws.next(data);
     }
 
@@ -90,26 +90,31 @@ export class WebSocketService {
 
         let code, id, ans, req;
         try {
-            //console.log('DEBUG RECV: ' + JSON.stringify(data));
+            //console.debug('DEBUG RECV: ' + JSON.stringify(data));
             code = data[0];
             id = data[1];
             ans = data[2];
             req = ans.request
-            if (req && req.token)
-                this.afbCtx.token = req.token;
-            if (req && req.uuid)
-                this.afbCtx.uuid = req.uuid;
         } catch (err) {
             console.log(err);
         }
-        if (ans.response && ans.response.token) {
-            this.opened.next(true);
-        }
 
-        // FIXME - hack: make responses compatible with fake-server / current code
-        let res = {};
+        // FIXME: make responses compatible with fake-server / current code
+        let res = ans;
         if (ans.response) {
-            if (ans.response.runnables) {
+            if (ans.response.token) {
+                if (/New Token/.test(ans.response.token)) {
+                    this.afbCtx.startRefresh(req);
+                    this.opened.next(true);
+                }
+                else if (/Token was refreshed/.test(ans.response.token)) {
+                    res = {
+                        type: "New Token",
+                        token: req.token
+                    }
+                }
+            }
+            else if (ans.response.runnables) {
                 ans.response.runnables.map((m) => {
                     m.isRunning = false
                     m.isPressed = false;
