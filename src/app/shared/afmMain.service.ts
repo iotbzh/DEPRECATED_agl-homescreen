@@ -1,60 +1,68 @@
 import { Injectable }              from "@angular/core";
 import { Subject }                 from "rxjs/Subject";
 
-import { WebSocketService }        from "./websocket.service";
+import { WebSocketService, IOpened }       from "./websocket.service";
 
 @Injectable()
 export class AfmMainService {
-
+    public connectionState : Subject<IOpened> = new Subject<IOpened>();
     public startAppResponse : Subject<Object> = new Subject();
     public detailsResponse : Subject<Object> = new Subject();
     public runnablesResponse : Subject<Object> = new Subject();
     public onesResponse : Subject<Object> = new Subject();
+    public eventsResponse : Subject<Object> = new Subject();
+    public requestResponse: Subject<Object> = new Subject();
 
     constructor(private webSocketService: WebSocketService){
-        let self = this;
-        self.webSocketService.start();
-        self.webSocketService.message.subscribe( ( response: any ) => {
+
+        this.webSocketService.opened.subscribe((state: IOpened) => {
+            this.connectionState.next(state);
+        });
+
+        this.webSocketService.message.subscribe( ( response: any ) => {
             switch (response.type) {
                 case "runnables":
-                    // @todo  afm-main/runnables
-                    self.runnablesResponse.next(response.data);
+                    this.runnablesResponse.next(response.data);
                     break;
                 case "start":
-                    // @todo afm-main/start
-                    self.startAppResponse.next(response.data);
+                    this.startAppResponse.next(response.data);
                     break;
                 case "once":
-                    // @todo afm-main/once
-                    self.onesResponse.next(response.data);
+                    this.onesResponse.next(response.data);
                     break;
+                case "event":
+                    this.eventsResponse.next(response);
+                    break;
+                case "request":
+                    this.requestResponse.next(response.data);
+                    break;
+
                 default: break;
                 }
         } );
     }
 
-    public startApp(app){
-        this.webSocketService.sendMessage(
-            JSON.stringify({
-                api: "afm-main/start",
-                id: app.id
-            })
-        );
+    private _sendMessage(cmd, app?) {
+        if (app && !app.id)
+            console.error('Invalid app.id');
+
+        let msg = {api: "afm-main/" + cmd};
+        if (app)
+            msg['id'] = app.id;
+
+        this.webSocketService.sendMessage(JSON.stringify(msg));
     }
 
-    public getRunnables() {
-        this.webSocketService.sendMessage(
-            JSON.stringify({
-                api: 'afm-main/runnables'
-            })
-        );
+    public startApp(app)    { this._sendMessage('once', app); }
+    public getRunnables()   { this._sendMessage('runnables'); }
+    public getDetails()     { this._sendMessage('detail'); }
+    public deleteApp(app)   { this._sendMessage('uninstall', app); }
+
+    public get isConnectionUp(): boolean {
+        return this.webSocketService.isConnectionUp;
     }
 
-    public getDetails() {
-        this.webSocketService.sendMessage(
-            JSON.stringify({
-                api: 'afm-main/details'
-            })
-        );
+    public restartConnection(resetToken?: boolean): void {
+        this.webSocketService.restart(resetToken);
     }
 }

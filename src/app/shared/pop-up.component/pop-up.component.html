@@ -1,9 +1,12 @@
 <div class="pop-up-cover"></div>
 <div class="pop-up-container">
-    <h5>{{'POPUP.CONFIRM' | translate}}</h5>
-    <div class="time-left">{{'POPUP.TIME-LEFT' | translate}}: {{timeLeft}} {{'POPUP.SECONDS' | translate}}</div>
+    <h5>{{title | translate}}</h5>
+    <div *ngIf="text && text.length" class="row text">
+        {{text}}
+    </div>
+    <div *ngIf="showTimeout && (givenTime > 0)" class="time-left">{{'POPUP.TIME-LEFT' | translate}}: {{timeLeft}} {{'POPUP.SECONDS' | translate}}</div>
     <div class="buttons-container">
         <span class="btn-primary" (click)="confirm()">Ok</span>
-        <span class="btn-primary" (click)="cancel()">{{'POPUP.CANCEL' | translate}}</span>
+        <span *ngIf="cancelButton" class="btn-primary" (click)="cancel()">{{'POPUP.CANCEL' | translate}}</span>
     </div>
-</div>
+</div>*ngIf

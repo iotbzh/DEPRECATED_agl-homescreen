@@ -7,12 +7,14 @@
     '@angular':                   './node_modules/@angular',
     'rxjs':                       './node_modules/rxjs',
     'ng2-translate':              './node_modules/ng2-translate/bundles',
+    'ng2-file-upload':              './node_modules/ng2-file-upload/bundles',
   };
   // packages tells the System loader how to load when no filename and/or no extension
   const packages = {
     'app':                        { main: 'main.js',  defaultExtension: 'js' },
     'rxjs':                       { main: 'bundles/Rx.js', defaultExtension: 'js' },
-    'ng2-translate':              { main: 'index.js', defaultExtension: 'js' }
+    'ng2-translate':              { main: 'index.js', defaultExtension: 'js' },
+    'ng2-file-upload':            { main: 'ng2-file-upload.umd.js', defaultExtension: 'js' }
   };
   const ngPackageNames = [
     'common',

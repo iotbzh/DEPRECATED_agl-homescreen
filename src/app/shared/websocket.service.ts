@@ -1,8 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Subject, Subscription, Observable } from 'rxjs/Rx';
+
 import { WebSocketSubject } from "rxjs/observable/dom/WebSocketSubject";
 import { environment } from "../../environments/environment";
 import { AfbContextService } from "./afbContext.service";
+import { AppConfigService } from "./appConfig.service";
+
+export interface IOpened {
+    isOpened: boolean;
+    remainingRetry?: number;
+    error?: string;
+}
 
 @Injectable()
 export class WebSocketService {
@@ -12,27 +20,67 @@ export class WebSocketService {
     private readonly RETERR = 4;
     private readonly EVENT = 5;
     private readonly ws_sub_protos = ["x-afb-ws-json1"];
+    private readonly MAX_CONNECTION_RETRY = environment.maxConnectionRetry || 10;
 
     private ws: WebSocketSubject<Object>;
     private socket: Subscription;
-    private url: string;
+    private baseUrl: string;
     private afbCtx: AfbContextService;
     private reqId = 0;
+    private connectRetry = 0;
 
     public message: Subject<Object> = new Subject();
-    public opened: Subject<boolean> = new Subject<boolean>();
+    public opened: Subject<IOpened> = new Subject<IOpened>();
 
-    constructor() {
-        this.url = 'ws://' + environment.service.ip;
-        if (environment.service.port)
-            this.url += ':' + environment.service.port;
-        this.url += environment.service.api_url;
-        this.afbCtx = new AfbContextService(this, environment.session);
+    constructor(private AfbContextService: AfbContextService) {
+        this.baseUrl = AfbContextService.wsBaseUrl;
+        this.afbCtx = AfbContextService;
+
+        this._openWS();
     };
+
+    private _openWS() {
+        this.ws = new WebSocketSubject({
+            url: this.afbCtx.getUrl('ws'),
+            protocol: this.ws_sub_protos,
+            openObserver: {
+                next: () => {
+                    this.connectRetry = 0;
+                    if (environment.debug)
+                        console.debug('WS open');
+                },
+                error: (err) => console.error('WS open error: ', err)
+            }
+        });
+
+        this.socket = this.ws.subscribe({
+            next: (data: MessageEvent) => this._onReceiveMessage(data),
+            error: (err) => this._onError(err),
+            complete: () => {
+                this.message.next({ type: 'closed' });
+            }
+        });
+
+        this.call("auth/connect", null);
+    }
 
     public close(): void {
         this.socket.unsubscribe();
         this.ws.complete();
+    }
+
+    public restart(resetToken?: boolean): void {
+        if (this.isConnectionUp)
+            this.close();
+
+        if (resetToken)
+            this.afbCtx.resetToInitialToken();
+
+        this._openWS();
+    }
+
+    public get isConnectionUp(): boolean {
+        return (!this.socket.closed);
     }
 
     public sendMessage(message: string): void {
@@ -45,52 +93,18 @@ export class WebSocketService {
     }
 
     public call(method, request): void {
-        // FIXME: do we still need to manage id to process resolve, reject callbacks ???
         this.reqId += 1;
         let data = JSON.stringify([this.CALL, this.reqId, method, request]);
-        //console.debug('DEBUG SEND: ' + data);
+        if (environment.debug)
+            console.debug('WS SEND: ' + data);
         this.ws.next(data);
     }
 
-    public start(): void {
-        let self = this;
-        let url = this.url;
-        if (this.afbCtx.token) {
-            url += '?x-afb-token=' + this.afbCtx.token;
-            if (this.afbCtx.uuid)
-                url += '&x-afb-uuid=' + this.afbCtx.uuid;
-        }
-
-        this.ws = new WebSocketSubject({
-            url: url,
-            protocol: this.ws_sub_protos
-        });
-
-        this.socket = this.ws.subscribe({
-            next: (data: MessageEvent) => this.onReceiveMessage(data),
-            error: () => {
-                self.opened.next(false);
-                this.message.next({ type: 'closed' });
-                self.socket.unsubscribe();
-                alert('ERROR, cannot established Websocket connection, url=' + url);
-                /*
-                setTimeout( () => {
-                    self.start();
-                }, 1000 );
-                */
-            },
-            complete: () => {
-                this.message.next({ type: 'closed' });
-            }
-        });
-        this.call("auth/connect", null);
-    }
-
-    private onReceiveMessage(data: MessageEvent): void {
-
+    private _onReceiveMessage(data: MessageEvent): void {
         let code, id, ans, req;
         try {
-            //console.debug('DEBUG RECV: ' + JSON.stringify(data));
+            if (environment.debug)
+                console.debug('WS RECV: ' + JSON.stringify(data));
             code = data[0];
             id = data[1];
             ans = data[2];
@@ -99,13 +113,56 @@ export class WebSocketService {
             console.log(err);
         }
 
-        // FIXME: make responses compatible with fake-server / current code
+        let recvMsg;
+
+        switch (ans.jtype) {
+            case 'afb-reply':
+                recvMsg = this._decode_afb_reply(ans, req);
+                break;
+            case 'afb-event':
+                recvMsg = ans;
+                recvMsg['type'] = 'event';
+                recvMsg['event'] = recvMsg['event'].replace(/^afm-main\//g, '');
+                break;
+            default:
+                recvMsg = ans;
+        }
+        this.message.next(recvMsg);
+    }
+
+    private _onError(err) {
+        this.message.next({ type: 'closed' });
+        this.socket.unsubscribe();
+
+        let msgErr;
+        if (this.connectRetry > this.MAX_CONNECTION_RETRY) {
+            msgErr = 'Websocket connection failure, url=' + this.afbCtx.getUrl('ws')
+        } else {
+            msgErr = 'Websocket connection failure, url=' + this.afbCtx.getUrl('ws') + '\nRetry ' + this.connectRetry + ' / ' + this.MAX_CONNECTION_RETRY;
+            if (environment.debug)
+                console.debug(msgErr);
+
+            setTimeout(() => this._openWS(), 1000);
+
+            this.connectRetry += 1;
+            if (this.connectRetry == this.MAX_CONNECTION_RETRY/2)
+                this.afbCtx.resetToInitialToken();
+        }
+
+        this.opened.next({
+            isOpened: false,
+            remainingRetry: this.MAX_CONNECTION_RETRY - this.connectRetry,
+            error: msgErr });
+    }
+
+    private _decode_afb_reply(ans, req) {
         let res = ans;
+
         if (ans.response) {
             if (ans.response.token) {
                 if (/New Token/.test(ans.response.token)) {
-                    this.afbCtx.startRefresh(req);
-                    this.opened.next(true);
+                    this.afbCtx.startRefresh(req, this);
+                    this.opened.next({ isOpened: true });
                 }
                 else if (/Token was refreshed/.test(ans.response.token)) {
                     res = {
@@ -116,14 +173,12 @@ export class WebSocketService {
             }
             else if (ans.response.runnables) {
                 ans.response.runnables.map((m) => {
-                    m.isRunning = false
-                    m.isPressed = false;
-                    let shortid = m.id.split('@')[0];
-                    switch (shortid) {
+                    let shortname = m.id.split('@')[0];
+                    switch (shortname) {
                         case 'phone':
                         case 'settings':
                             m.authRequired = true;
-                            m.name = shortid;
+                            m.name = shortname;
                             break;
                         case 'mediaplayer':
                             m.name = 'multimedia';
@@ -137,7 +192,7 @@ export class WebSocketService {
                             m.id = 'radio';
                             break;
                         default:
-                            m.name = shortid;
+                            m.name = shortname;
                             break;
                     }
 
@@ -155,7 +210,14 @@ export class WebSocketService {
                 };
             }
         }
+        else if (ans.request) {
+            // handle afb-reply type request failed
+            res = {
+                type: "request",
+                data: ans.request
+            }
+        }
 
-        this.message.next(res);
-    };
+        return res;
+    }
 }

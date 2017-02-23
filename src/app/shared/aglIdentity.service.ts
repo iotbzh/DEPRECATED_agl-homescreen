@@ -10,7 +10,6 @@ export class AglIdentityService {
     public loginResponse : Subject<Object> = new Subject();
 
     constructor(private webSocketService: WebSocketService){
-        this.webSocketService.start();
         this.webSocketService.message.subscribe( ( response: any ) => {
             switch (response.type) {
                 case "logged-in":

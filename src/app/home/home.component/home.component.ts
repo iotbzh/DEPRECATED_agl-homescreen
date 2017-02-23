@@ -1,5 +1,6 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy } from "@angular/core";
 import {AglIdentityService} from "../../shared/aglIdentity.service";
+import { AfmMainService } from "../../shared/afmMain.service";
 
 @Component({
   selector: 'home',
@@ -11,7 +12,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private tmpAccount;
   private hidePopUp: boolean = true;
 
-  constructor(private aglIdentityService: AglIdentityService) {
+  constructor(private aglIdentityService: AglIdentityService,
+    public afmMainService: AfmMainService) {
   }
 
   ngOnInit() {
@@ -27,6 +29,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.aglIdentityService.logoutResponse.subscribe(response=> {
       this.account = null;
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Allow to re-open connection manually (by opening this view)
+    if (!this.afmMainService.isConnectionUp)
+        this.afmMainService.restartConnection(true);
   }
 
   ngOnDestroy(): void {

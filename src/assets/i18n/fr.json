@@ -5,7 +5,8 @@
     "MULTIMEDIA": "Multimédia",
     "HVAC": "Clim",
     "CONNECTIVITY": "Connectivité",
-    "NAVIGATION": "Navigation"
+    "NAVIGATION": "Navigation",
+    "APP-MANAGER": "Gestionnaire d'applications"
   },
   "HOME": {
     "TITLE": "Bienvenue"
@@ -38,5 +39,10 @@
     "CANCEL": "Annuler",
     "TIME-LEFT": "Temps restant",
     "SECONDS": "secondes"
+  },
+  "TOOLTIP": {
+    "APPMGT": {
+      "UPLOAD": "Télécharger une nouvelle application AGL"
+    }
   }
 }

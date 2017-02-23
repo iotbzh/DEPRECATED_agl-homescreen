@@ -1,0 +1,59 @@
+<app-header></app-header>
+<main class="page-content">
+
+    <user-bar *ngIf="account" [(language)]="account.language" [(username)]="account.username"></user-bar>
+
+    <div class="row">
+        <table class="table center">
+            <thead>
+                <tr>
+                    <th width="30%">Name</th>
+                    <th>Version</th>
+                    <th>Status</th>
+                    <th>Actions
+                        <div class="upload-file">
+                            <input #inputFile type="file" ng2FileSelect [uploader]="uploader" style="display:none" accept="{{acceptFile}}" />
+                            <span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="{{'TOOLTIP.APPMGT.UPLOAD' | translate}}">
+                                <button (click)="inputFile.click()">
+                                    <img src="assets/img/upload-file.png">
+                                </button>
+                            </span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let app of runnables">
+                    <!-- TODO: add tooltip with app.author and app.description -->
+                    <td>
+                        <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" title="{{app?.description}}">
+                            <strong>{{ app?.name }}</strong>
+                        </span>
+                    </td>
+                    <td>{{ app?.version }}</td>
+                    <td class="text-center">
+                        <span *ngIf="app.isRunning"><i class="fa fa-spinner"></i></span>
+                        <span *ngIf="app.isInstalled"><i class="fa fa-check"></i></span>
+                        <span *ngIf="!app.isInstalled && !app.installProgress"><i class="fa fa-ban"></i></span>
+                        <span *ngIf="app.installProgress >= 0">Installing {{app.installProgress}}%</span>
+                        <span *ngIf="app.isError"><i class="fa fa-remove"></i></span>
+                    </td>
+                    <td nowrap>
+                        <!-- SEB TODO <info-app> </info-app> -->
+                        <button *ngIf="!app.isInstalled" type="button" class="button tiny" (click)="installApp(app)">
+                            <span class="fa fa-upload"></span> Install
+                        </button>
+                        <button *ngIf="app.isInstalled" type="button" class="button alert tiny" (click)="uninstallApp(app)">
+                            <span class="fa fa-trash"></span> Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<pop-up [title]="notifier.title" [text]="notifier.text" [timeout]="notifier.timeout" [showTimeout]="(notifier.timeout > 0)" [cancelButton]=false (onConfirm)="confirmPopup()" *ngIf="notifier.show"></pop-up>
+<pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="!hidePopUpLogin"></pop-up>
+<app-footer></app-footer>

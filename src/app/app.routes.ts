@@ -1,5 +1,6 @@
 import {Routes, RouterModule} from '@angular/router';
 import {AppLauncherComponent} from './app-launcher/app-launcher.component/index';
+import {AppManagerComponent} from './app-manager/app-manager.component/index';
 import {MultimediaComponent} from './multimedia/multimedia.component/index';
 import {HvacComponent} from "./hvac/hvac.component/hvac.component";
 import {NavigationComponent} from "./navigation/navigation.component/navigation.component";
@@ -14,6 +15,7 @@ import {EventEmitterComponent} from "./event-emitter/event-emitter.component/eve
 const routes: Routes = [
   {path: 'home', component: HomeComponent},
   {path: 'app-launcher', component: AppLauncherComponent},
+  {path: 'app-manager', component: AppManagerComponent},
   {path: 'multimedia', component: MultimediaComponent},
   {path: 'hvac', component: HvacComponent},
   {path: 'navigation', component: NavigationComponent},

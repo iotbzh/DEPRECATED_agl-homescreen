@@ -3,9 +3,11 @@ import {HttpModule, Http} from "@angular/http";
 import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule} from "@angular/forms";
 import {TranslateModule, TranslateLoader, TranslateStaticLoader} from "ng2-translate";
+import { FileUploadModule } from 'ng2-file-upload';
 import {AppComponent, appRoutes, appRouteProviders} from "./index";
 import {HeaderComponent, MenubarComponent, InfobarComponent} from "./shared/header.component/index";
 import {AppLauncherComponent} from "./app-launcher/app-launcher.component/index";
+import {AppManagerComponent} from "./app-manager/app-manager.component/index";
 import {MultimediaComponent} from "./multimedia/multimedia.component/index";
 import {HvacComponent} from "./hvac/hvac.component/hvac.component";
 import {NavigationComponent} from "./navigation/navigation.component/navigation.component";
@@ -23,6 +25,7 @@ import {PopUpComponent} from "./shared/pop-up.component/pop-up.component";
 import {EventEmitterComponent} from "./event-emitter/event-emitter.component/event-emitter.component";
 import {UserBarComponent} from "./shared/user-bar.component/user-bar.component";
 import {WebSocketService} from "./shared/websocket.service";
+import {AfbContextService} from "./shared/afbContext.service";
 import {AglIdentityService} from "./shared/aglIdentity.service";
 import {AfmMainService} from "./shared/afmMain.service";
 import {RemoveAppsPrefixPipe} from './remove-apps-prefix.pipe';
@@ -33,6 +36,7 @@ import {RemoveAppsPrefixPipe} from './remove-apps-prefix.pipe';
     FormsModule,
     HttpModule,
     appRoutes,
+    FileUploadModule,
     TranslateModule.forRoot({
             provide: TranslateLoader,
             useFactory: (http: Http) => new TranslateStaticLoader(http, '/assets/i18n', '.json'),
@@ -47,6 +51,7 @@ import {RemoveAppsPrefixPipe} from './remove-apps-prefix.pipe';
     MenubarComponent,
     InfobarComponent,
     AppLauncherComponent,
+    AppManagerComponent,
     MultimediaComponent,
     HvacComponent,
     NavigationComponent,
@@ -66,6 +71,7 @@ import {RemoveAppsPrefixPipe} from './remove-apps-prefix.pipe';
     AuthGuard,
     AuthService,
     WebSocketService,
+    AfbContextService,
     AglIdentityService,
     AfmMainService
   ],

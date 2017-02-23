@@ -18,7 +18,8 @@ module.exports = {
     node_modules: [
       './node_modules/@angular/**/*',
       './node_modules/rxjs/**/*',
-      './node_modules/ng2-translate/bundles/**/*'
+      './node_modules/ng2-translate/bundles/**/*',
+      './node_modules/ng2-file-upload/bundles/**/*',
     ],
 
     dist: './dist'

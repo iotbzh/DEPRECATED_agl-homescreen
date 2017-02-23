@@ -18,9 +18,15 @@
 }
 .pop-up-container h5{
     color: #ffffff;
-    padding: 15% 20% 20%;
+    padding: 5%;
     text-align: center;
 }
+
+.text{
+    color: #ffffff;
+    padding: 15% 10% 10%;
+}
+
 .buttons-container{
     position: absolute;
     width: 100%;

@@ -1,0 +1,46 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.welcome-bar {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.row table {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    // SEB FIXME color: #FFFFFF;
+    color: black;
+}
+
+.button {
+    margin-left: 5px;
+    margin-right: 5px;
+    text-transform: uppercase;
+}
+
+table.center {
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th {
+    text-align: center;
+}
+.upload-file {
+    display: inline-block;
+    height: 1.5rem;
+    width: 1.5rem;
+    margin: 0.5rem;
+}

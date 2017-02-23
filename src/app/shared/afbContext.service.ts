@@ -1,9 +1,12 @@
 import { Injectable } from "@angular/core";
 
+import { environment } from "../../environments/environment";
 import { WebSocketService } from "./websocket.service";
 
 @Injectable()
 export class AfbContextService {
+
+    public environment: any;
 
     private _uuid: string = undefined;
     private _token: string = undefined;
@@ -11,46 +14,113 @@ export class AfbContextService {
     private _pingrate: number;
     private _ws: WebSocketService;
     private _tmoInterval: number = null;
+    private _service: any;
 
-    // number of seconds before
+    // number of seconds that token will be refreshed before it will fire
     private _TIMEOUT_LIFEGUARD: number = 1000;
 
-    constructor(
-        webSocketService: WebSocketService,
-        session: {
-            initial: string,
-            timeout?: number,
-            pingrate?: number
-        }) {
+    constructor() {
+        this.environment = environment;
 
-        this._token = session.initial;
-        this._timeout = session.timeout * 1000 || 0;
-        // TODO: add ping monitor feature
-        this._pingrate = session.pingrate || 0;
-        this._ws = webSocketService;
+        let sess = this.environment.session;
+        if (sess) {
+            this._token = this.getCookie('AGL_TOKEN') || sess.initial;
+            this._uuid = this.getCookie('AGL_UUID');
+            this._timeout = sess.timeout * 1000 || 0;
+            // TODO: add ping monitor feature
+            this._pingrate = sess.pingrate || 0;
+
+            if (this.environment.debug) {
+                console.debug('Token initial: ', sess.initial);
+                console.debug('cookieToken', sess.cookieToken);
+            }
+        }
+
+        this._service = this.environment.service;
+        if (!this._service) {
+            this._service = {
+                ip: 'localhost',
+                port: null,
+                api_url: '/api'
+            };
+        }
+    };
+
+    get baseUrl(): string {
+        let url = this._service.ip;
+        if (this._service.port)
+            url += ':' + this._service.port;
+        url += this._service.api_url;
+        return url;
     }
+
+    get wsBaseUrl(): string { return 'ws://' + this.baseUrl };
+
+    get httpBaseUrl(): string { return 'http://' + this.baseUrl };
+
+    public getUrl(proto: string, method?: string): string {
+        let url = (proto == 'http') ? this.httpBaseUrl : this.wsBaseUrl;
+        if (method)
+            url += '/' + method;
+        if (this.token) {
+            url += '?x-afb-token=' + this.token;
+            if (this.uuid)
+                url += '&x-afb-uuid=' + this.uuid;
+        }
+        return url;
+    }
+
+    // FIXME - better to use a package like angular2-cookie
+    private setCookie(cname, cvalue, exdays): void {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    private getCookie(cname): string {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return null;
+    };
 
     get token(): string {
         return this._token;
     }
     set token(val: string) {
+        this.setCookie('AGL_TOKEN', val, 1);
         this._token = val;
+    }
+
+    resetToInitialToken(): void {
+        this.token = environment.session.initial;
+        this.uuid = null;
     }
 
     get uuid(): string {
         return this._uuid;
     }
     set uuid(val: string) {
+        this.setCookie('AGL_UUID', val, 1);
         this._uuid = val;
     }
 
-    startRefresh(req) {
+    startRefresh(req, webSocketService?: WebSocketService) {
         let self = this;
+        this._ws = webSocketService;
 
         if (this._timeout <= 0)
             return;
         if (this._tmoInterval)
             return;
+        if (!this._ws) {
+            console.error('Invalid WebSocketService');
+            return;
+        }
 
         if (req && req.token)
             this.token = req.token;
@@ -73,6 +143,7 @@ export class AfbContextService {
             return;
         clearInterval(this._tmoInterval);
         this._tmoInterval = null;
-        this._ws.message.unsubscribe();
+        if (this._ws)
+            this._ws.message.unsubscribe();
     }
 }
