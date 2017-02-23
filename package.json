@@ -39,7 +39,7 @@
   "devDependencies": {
     "browser-sync": "2.18.2",
     "browser-sync-spa": "1.0.3",
-    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp": "3.9.1",
     "gulp-clean": "0.3.2",
     "gulp-clean-css": "2.3.0",
     "gulp-download": "0.0.1",
