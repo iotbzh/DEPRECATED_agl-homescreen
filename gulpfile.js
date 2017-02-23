@@ -109,7 +109,7 @@ gulp.task('serve', function () {
         open: true,
         browser: 'default',
         server: {
-            baseDir: conf.dist,
+            baseDir: conf.paths.dist,
             routes: {}
         },
         port: 8000
