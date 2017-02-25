@@ -187,10 +187,6 @@ export class WebSocketService {
                             m.authRequired = true;
                             m.name = 'point';
                             break;
-                        case 'radio':
-                            m.name = 'radio';
-                            m.id = 'radio';
-                            break;
                         default:
                             m.name = shortname;
                             break;
