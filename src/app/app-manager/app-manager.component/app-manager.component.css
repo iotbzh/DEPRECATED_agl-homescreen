@@ -19,13 +19,25 @@
 .row table {
     font-size: 0.8em;
     text-transform: uppercase;
-    // SEB FIXME color: #FFFFFF;
+}
+
+.row table thead {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.row table tbody {
+    background: rgba(255, 255, 255, 0.3);
     color: black;
+}
+
+.row table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .button {
     margin-left: 5px;
     margin-right: 5px;
+    margin-bottom: 0;
     text-transform: uppercase;
 }
 
