@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { AfmMainService } from "../../shared/afmMain.service";
+import { AfmMainService, App } from "../../shared/afmMain.service";
 import { IOpened } from "../../shared/websocket.service";
 import { AglIdentityService } from "../../shared/aglIdentity.service";
 import { FileUploader, FileItem, ParsedResponseHeaders } from 'ng2-file-upload';
@@ -20,7 +20,7 @@ interface INotifier {
     styleUrls: ['app-manager.component.css']
 })
 export class AppManagerComponent implements OnInit, OnDestroy {
-    private runnables;
+    private apps: App[];
     private account;
     private tmpAccount;
     public uploader: FileUploader;
@@ -28,7 +28,10 @@ export class AppManagerComponent implements OnInit, OnDestroy {
     private hidePopUpLogin: boolean = true;
     private afCtx: AfbContextService;
 
-    constructor(private afmMainService: AfmMainService, private aglIdentityService: AglIdentityService, private AfbContextService: AfbContextService) {
+    constructor(private afmMainService: AfmMainService,
+        private aglIdentityService: AglIdentityService,
+        private AfbContextService: AfbContextService) {
+
         this.afCtx = AfbContextService;
         this.uploader = new FileUploader({ url: '/notSet' });
         this.uploader.onAfterAddingAll = this._onAfterAddingAll.bind(this);
@@ -38,6 +41,7 @@ export class AppManagerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        /* Connection */
         this.afmMainService.connectionState.subscribe((state: IOpened) => {
             if (state.isOpened) {
                 this.notifier = { show: false };
@@ -53,17 +57,16 @@ export class AppManagerComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.afmMainService.runnablesResponse.subscribe((response: any) => {
-            this.runnables = response.apps;
-            if (this.runnables) {
-                this.runnables.forEach(el => {
-                    el.isInstalled = true;
-                    el.isRunning = el.isPressed = false;
-                });
-            }
+        /* runnablesResponse */
+        this.afmMainService.runnablesResponse.subscribe((response: App[]) => {
+            this.apps = response;
+            this.apps.forEach((elem) => elem.extend = {
+                installProgress: -1
+            })
         });
 
-        this.afmMainService.onesResponse.subscribe((response: any) => {
+        /* Start once */
+        this.afmMainService.startOnceResponse.subscribe((response: any) => {
             this.notifier = {
                 show: true,
                 title: 'ERROR',
@@ -72,11 +75,13 @@ export class AppManagerComponent implements OnInit, OnDestroy {
             }
         });
 
+        /* Event */
         this.afmMainService.eventsResponse.subscribe((response: any) => {
             if (response.event == "application-list-changed")
-                this.afmMainService.getRunnables();
+                this.afmMainService.getRunnables(true);
         });
 
+        /* Request */
         this.afmMainService.requestResponse.subscribe((response: any) => {
             if (response.status == 'failed') {
                 this.notifier = {
@@ -111,7 +116,7 @@ export class AppManagerComponent implements OnInit, OnDestroy {
                 console.debug('Upload file: ', item);
                 console.debug('Upload url: ', url);
             }
-            app.installProgress = 0;
+            app.extend.installProgress = 0;
             this.uploader.uploadItem(item);
         });
     }
@@ -131,18 +136,25 @@ export class AppManagerComponent implements OnInit, OnDestroy {
     /*FIXME private property prevent bind(this) ??? */
     _onAfterAddingAll(fileItems: any) {
         fileItems.forEach(el => {
-            this.runnables.push({
-                name: el.file.name.replace(/\.wgt$/g, ''),
+            let name = el.file.name.replace(/\.wgt$/g, '');
+            this.afmMainService.addNewApp({
+                id: 'TEMPO_' + name,
+                name: name,
+                shortname: name,
+                version: null,
+                author: null,
+                description: null,
                 filename: el.file.name,
-                isInstalled: false
+                isInstalled: false,
+                extend: { installProgress: -1 }
             });
         });
     }
 
     /*private*/ _upLoad_onProgressItem(fileItem: FileItem, progress: any): any {
-        this.runnables.forEach(el => {
+        this.apps.forEach(el => {
             if (el.filename == fileItem.file.name)
-                el.installProgress = progress;
+                el.extend.installProgress = progress;
         });
     }
 
@@ -154,6 +166,14 @@ export class AppManagerComponent implements OnInit, OnDestroy {
     /*private*/ _upLoad_onCompleteItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any {
         if (environment.debug)
             console.debug('Upload Complete item', item, response, status);
+
+        // FIXME - hack
+        // Remove temporary entry because install widget may have
+        // another name than the one determined from filename (see _onAfterAddingAll)
+        let idx = this.apps.findIndex((elem) => elem.filename == item.file.name);
+        if (idx != -1)
+            this.afmMainService.removeApp(this.apps[idx].id);
+
         this.uploader.removeFromQueue(item);
     }
 }

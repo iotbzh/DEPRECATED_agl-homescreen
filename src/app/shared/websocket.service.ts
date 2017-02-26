@@ -172,27 +172,6 @@ export class WebSocketService {
                 }
             }
             else if (ans.response.runnables) {
-                ans.response.runnables.map((m) => {
-                    let shortname = m.id.split('@')[0];
-                    switch (shortname) {
-                        case 'phone':
-                        case 'settings':
-                            m.authRequired = true;
-                            m.name = shortname;
-                            break;
-                        case 'mediaplayer':
-                            m.name = 'multimedia';
-                            break;
-                        case 'pio':
-                            m.authRequired = true;
-                            m.name = 'point';
-                            break;
-                        default:
-                            m.name = shortname;
-                            break;
-                    }
-
-                });
                 res = {
                     type: "runnables",
                     data: { apps: ans.response.runnables }

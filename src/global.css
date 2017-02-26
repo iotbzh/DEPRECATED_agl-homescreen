@@ -98,34 +98,6 @@ main.page-content {
   top: 2px;
 }
 
-.app-launcher.hvac {
-  background-image: url('./assets/svg/hvac-circle.svg');
-}
-.app-launcher.navigation {
-  background-image: url('./assets/svg/navigation-circle.svg');
-}
-.app-launcher.phone {
-  background-image: url('./assets/svg/phone-circle.svg');
-}
-.app-launcher.radio {
-  background-image: url('./assets/svg/radio-circle.svg');
-}
-.app-launcher.multimedia {
-  background-image: url('./assets/svg/multimedia-circle.svg');
-}
-.app-launcher.connectivity {
-  background-image: url('./assets/svg/connectivity-circle.svg');
-}
-.app-launcher.dashboard {
-  background-image: url('./assets/svg/dashboard-circle.svg');
-}
-.app-launcher.settings {
-  background-image: url('./assets/svg/settings-circle.svg');
-}
-.app-launcher.point {
-  background-image: url('./assets/svg/point-circle.svg');
-}
-
 .btn-primary {
   background-color: black;
   color: #62fdb9;

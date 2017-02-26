@@ -4,16 +4,17 @@
     <user-bar *ngIf="account" [(language)]="account.language" [(username)]="account.username"></user-bar>
 
     <div class="row">
-        <div class="small-4 columns" *ngFor="let item of runnables; let i = index;">
-            <div class="app-launcher {{item.name}}" [ngClass]="{'is-pressed': item.isPressed, 'is-running': item.isRunning}" (click)="runApp($event, item)"
-                (mouseup)="item.isPressed=false" (mousedown)="item.isPressed=true">
-                <!--(touchstart)="item.isPressed=true"-->
-                <!--(touchend)="item.isPressed=false"-->
+        <div class="small-4 columns" *ngFor="let item of apps; let i = index;">
+            <div class="app-launcher" [ngStyle]="{'background-image': 'url(' + item.iconUrl + ')'}" [ngClass]="{'is-pressed': item.extend.isPressed, 'is-running': item.isRunning}" (click)="runApp($event, item)"
+                (mouseup)="item.extend.isPressed=false" (mousedown)="item.extend.isPressed=true">
+                <!--(touchstart)="item.extend.isPressed=true"-->
+                <!--(touchend)="item.extend.isPressed=false"-->
             </div>
             <h5>{{"APPS." + item.name | uppercase | translate | removeAppsPrefix}}</h5>
         </div>
     </div>
 
 </main>
+<pop-up [title]="notifier.title" [text]="notifier.text" [timeout]="notifier.timeout" [showTimeout]="(notifier.timeout > 0)" [cancelButton]=false (onConfirm)="confirmPopup()" *ngIf="notifier.show"></pop-up>
 <pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="hidePopUpLogin"></pop-up>
 <app-footer></app-footer>

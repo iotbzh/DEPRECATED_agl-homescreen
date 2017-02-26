@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let app of runnables">
+                <tr *ngFor="let app of apps">
                     <!-- TODO: add tooltip with app.author and app.description -->
                     <td>
                         <span data-tooltip aria-haspopup="true" class="has-tip right" data-disable-hover="false" title="{{app?.description}}">
@@ -34,9 +34,9 @@
                     <td class="text-center">
                         <span *ngIf="app.isRunning"><i class="fa fa-spinner"></i></span>
                         <span *ngIf="app.isInstalled"><i class="fa fa-check"></i></span>
-                        <span *ngIf="!app.isInstalled && !app.installProgress"><i class="fa fa-ban"></i></span>
-                        <span *ngIf="app.installProgress >= 0">Installing {{app.installProgress}}%</span>
-                        <span *ngIf="app.isError"><i class="fa fa-remove"></i></span>
+                        <span *ngIf="!app.isInstalled && app.extend.installProgress < 0"><i class="fa fa-ban"></i></span>
+                        <span *ngIf="app.extend.installProgress >= 0">Installing {{app.extend.installProgress}}%</span>
+                        <span *ngIf="app.extend.isError"><i class="fa fa-remove"></i></span>
                     </td>
                     <td nowrap>
                         <!-- SEB TODO <info-app> </info-app> -->
