@@ -1,12 +1,15 @@
 {
-  "name": "afb",
-  "version": "0.0.0",
-  "author": "Agemos Software <contact@agemos.fr>",
+  "name": "AGL-Homescreen",
+  "version": "0.0.1",
+  "author": "Agemos Software <contact@agemos.fr> and Sébastien Douheret - IoT.bzh <sebastien.douheret@iot.bzh>",
+  "description": "AGL HTML5 Homescreen",
   "license": "Apache 2",
   "private": true,
   "readme": "README.md",
   "keywords": [
-    "angular"
+    "angular",
+    "HTML5",
+    "AGL"
   ],
   "scripts": {
     "clean": "gulp clean",
