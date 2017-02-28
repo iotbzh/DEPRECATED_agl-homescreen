@@ -76,6 +76,7 @@ For example, use the following instructions for qemux86-64:
   - Use `existing virtual hard disk file` and select the previous downloaded vmdk image.
 
   - Network settings: `Adapter 1: NAT`, in Advanced menu, click on `Port Forwarding` and define the following rules:
+  
     | Name | Protocol | Host IP | Host Port | Guest IP | Guest Port |
     |------|----------|---------|-----------|----------|------------|
     | ssh  |    TCP   |         |   4444    |          |      22    |
