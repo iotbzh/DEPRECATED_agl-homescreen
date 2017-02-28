@@ -1,4 +1,14 @@
 {
+  "LOGIN": {
+    "EMAIL": "Email",
+    "PASSWORD": "Mot de Passe",
+    "SUBMIT_LOGIN": "S'identifier"
+  },
+  "EVENT_EMMITER": {
+    "SEL_LANG": "Selection de la langue",
+    "EMIT_LOGIN": "Emmettre l'ouverture de session",
+    "EMIT_LOGOUT": "Emmettre la fermeture de session"
+  },
   "MENUBAR": {
     "HOME": "Accueil",
     "APP-LAUNCHER": "Lanceur d'applications",
@@ -20,7 +30,10 @@
   "SETTINGS": {
     "HOME": {
       "TITLE": "Paramètres"
-    }
+    },
+    "BLUETOOTH_SETTINGS": "Paramètres Bluetooth",
+    "DATETIME_SETTINGS": "Paramètres Date/Heure",
+    "WIFI_SETTINGS": "Paramètres Wifi"
   },
   "APPS": {
     "HVAC": "Clim",
@@ -32,6 +45,16 @@
     "DASHBOARD": "Tableau de bord",
     "SETTINGS": "Paramètres",
     "POINT" : "Point d'intérêt"
+  },
+  "APPS_MGT": {
+    "NAME": "Nom",
+    "VERSION": "Version",
+    "STATUS": "Statut",
+    "ACTIONS": "Actions",
+    "TOOLTIP_UPLOADER": "Télécharger une nouvelle application AGL.",
+    "INSTALLING": "Installation en cours",
+    "BUTTON_INSTALL": "Installer",
+    "BUTTON_DELETE": "Effacer"
   },
   "UNDER-CONSTRUCTION": "est en construction",
   "POPUP":{

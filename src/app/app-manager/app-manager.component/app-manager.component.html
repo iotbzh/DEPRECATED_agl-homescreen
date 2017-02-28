@@ -7,13 +7,13 @@
         <table class="table center">
             <thead>
                 <tr>
-                    <th width="30%">Name</th>
-                    <th>Version</th>
-                    <th>Status</th>
-                    <th>Actions
+                    <th width="30%">{{"APPS_MGT.NAME" | translate}}</th>
+                    <th>{{"APPS_MGT.VERSION" | translate}}</th>
+                    <th>{{"APPS_MGT.STATUS" | translate}}</th>
+                    <th>{{"APPS_MGT.ACTIONS" | translate}}
                         <div class="upload-file">
                             <input #inputFile type="file" ng2FileSelect [uploader]="uploader" style="display:none" accept="{{acceptFile}}" />
-                            <span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="{{'TOOLTIP.APPMGT.UPLOAD' | translate}}">
+                            <span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="1" title="{{'APPS_MGT.TOOLTIP_UPLOADER' | translate}}">
                                 <button (click)="inputFile.click()">
                                     <img src="assets/img/upload-file.png">
                                 </button>
@@ -35,16 +35,16 @@
                         <span *ngIf="app.isRunning"><i class="fa fa-spinner"></i></span>
                         <span *ngIf="app.isInstalled"><i class="fa fa-check"></i></span>
                         <span *ngIf="!app.isInstalled && app.extend.installProgress < 0"><i class="fa fa-ban"></i></span>
-                        <span *ngIf="app.extend.installProgress >= 0">Installing {{app.extend.installProgress}}%</span>
+                        <span *ngIf="app.extend.installProgress >= 0">{{"APPS_MGT.INSTALLING" | translate}} {{app.extend.installProgress}}%</span>
                         <span *ngIf="app.extend.isError"><i class="fa fa-remove"></i></span>
                     </td>
                     <td nowrap>
                         <!-- SEB TODO <info-app> </info-app> -->
                         <button *ngIf="!app.isInstalled" type="button" class="button tiny" (click)="installApp(app)">
-                            <span class="fa fa-upload"></span> Install
+                            <span class="fa fa-upload"></span> {{"APPS_MGT.BUTTON_INSTALL" | translate}}
                         </button>
                         <button *ngIf="app.isInstalled" type="button" class="button alert tiny" (click)="uninstallApp(app)">
-                            <span class="fa fa-trash"></span> Delete
+                            <span class="fa fa-trash"></span> {{"APPS_MGT.BUTTON_DELETE" | translate}}
                         </button>
                     </td>
                 </tr>

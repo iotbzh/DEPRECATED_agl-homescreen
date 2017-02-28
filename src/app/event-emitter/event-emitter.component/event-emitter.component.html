@@ -6,15 +6,15 @@
         </label>
         <label>
             <select [(ngModel)]="language">
-                <option selected="selected" disabled value="">Select Language</option>
+                <option selected="selected" disabled value="">{{"EVENT_EMMITER.SEL_LANG" | translate}}</option>
                 <option value="ENG">ENG</option>
                 <option value="FRA">FRA</option>
             </select>
         </label>
     </div>
     <div>
-        <button (click)="triggerLogin()">Emit login</button>
-        <button (click)="triggerLogout()">Emit logout</button>
+        <button (click)="triggerLogin()">{{"EVENT_EMMITER.EMIT_LOGIN" | translate}}</button>
+        <button (click)="triggerLogout()">{{"EVENT_EMMITER.EMIT_LOGOUT" | translate}}</button>
     </div>
 </main>
 <app-footer></app-footer>

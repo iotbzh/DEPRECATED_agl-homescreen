@@ -1,4 +1,14 @@
 {
+  "LOGIN": {
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "SUBMIT_LOGIN": "Login"
+  },
+  "EVENT_EMMITER": {
+    "SEL_LANG": "Select Language",
+    "EMIT_LOGIN": "Emit login",
+    "EMIT_LOGOUT": "Emit logout"
+  },
   "MENUBAR": {
     "HOME": "Home",
     "APP-LAUNCHER": "App launcher",
@@ -20,7 +30,10 @@
   "SETTINGS": {
     "HOME" : {
       "TITLE": "Settings"
-    }
+    },
+    "BLUETOOTH_SETTINGS": "Bluetooth Settings",
+    "DATETIME_SETTINGS": "Datetime Settings",
+    "WIFI_SETTINGS": "Wifi Settings"
   },
   "APPS": {
     "HVAC": "HVAC",
@@ -32,6 +45,16 @@
     "DASHBOARD": "Dashboard",
     "SETTINGS": "Settings",
     "POINT" : "Point of interest"
+  },
+  "APPS_MGT": {
+    "NAME": "Name",
+    "VERSION": "Version",
+    "STATUS": "Status",
+    "ACTIONS": "Actions",
+    "TOOLTIP_UPLOADER": "Upload a new AGL application",
+    "INSTALLING": "Installing",
+    "BUTTON_INSTALL": "Install",
+    "BUTTON_DELETE": "Delete"
   },
   "UNDER-CONSTRUCTION": "is under construction",
   "POPUP":{

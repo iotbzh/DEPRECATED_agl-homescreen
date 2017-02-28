@@ -1,13 +1,13 @@
 <section class="login center-block">
   <form (submit)="login(username.value, password.value)">
     <div class="input-field">
-      <label for="text">Email</label>
+      <label for="text">{{"LOGIN.EMAIL" | translate}}</label>
       <input class="validate" id="text" type="text" name="username" required #username>
     </div>
     <div class="input-field">
-      <label for="password">Password</label>
+      <label for="password">{{"LOGIN.PASSWORD" | translate}}</label>
       <input class="validate" id="password" type="password" name="password" required #password>
     </div>
-    <button class="button" type="submit">Login</button>
+    <button class="button" type="submit">{{"LOGIN.SUBMIT_LOGIN" | translate}}</button>
   </form>
 </section>
