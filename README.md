@@ -55,7 +55,7 @@ Use [http://localhost:8000/#/event-emitter](http://localhost:8000/#/event-emitte
 
 You can use a real target (raspi3, porter, ...) or a qemu.
 
-For example, use the following instructions for qemux86-64:
+##### For example, use the following instructions for qemux86-64 running in VirtualBox:
 
   - Download qemux86-64 vmdk image : [agl-demo-platform-qemux86-64.vmdk](https://download.automotivelinux.org/AGL/snapshots/master/latest/qemux86-64/deploy/images/qemux86-64/)
 
@@ -76,7 +76,7 @@ For example, use the following instructions for qemux86-64:
   - Use `existing virtual hard disk file` and select the previous downloaded vmdk image.
 
   - Network settings: `Adapter 1: NAT`, in Advanced menu, click on `Port Forwarding` and define the following rules:
-  
+
     | Name | Protocol | Host IP | Host Port | Guest IP | Guest Port |
     |------|----------|---------|-----------|----------|------------|
     | ssh  |    TCP   |         |   4444    |          |      22    |
@@ -112,6 +112,48 @@ For example, use the following instructions for qemux86-64:
 
     Following options may be added to `afb-daemon` command to help debugging:
     `-vvv` and/or `--tracereq=all`
+
+  - Open [http://localhost:8000](http://localhost:8000) in a browser.
+
+
+##### Run `qemu` (without VirtualBox) :
+  - Build AGL qemux86-64 image and run it (please refer to [AGL getting started](http://docs.automotivelinux.org/docs/getting_started/en/dev/reference/machines/qemu.html) for more info) :
+    ```
+    source meta-agl/scripts/aglsetup.sh -m qemux86-64 agl-demo agl-netboot agl-appfw-smack
+    bitbake agl-demo-platform
+    runqemu qemux86-64
+    ```
+
+  - Setup `gulp.config.js` file accordingly:
+    ```
+    ...
+    deploy: {
+      target_ip: '192.168.7.2',     # must be depend on your qemu settings
+      port: null,
+      dir: 'agl-homescreen'
+    },
+    ....
+    ```
+
+  - Compile and and deploy code on target using:
+    ```
+    gulp deploy
+    ```
+
+  - Start app on target:
+    ```
+    ssh root@192.168.7.2
+
+    # Manually install afm-main (only if needed and only the first time)
+    rpm -ihv af-main-binding-1.0-r0.core2_64.rpm
+
+    # Start app on target
+    /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen  --sessiondir=/tmp/.afb-daemon --mode=remote --token=123456789 --roothttp=. --alias=/icons:/var/lib/afm/icons
+    ```
+
+  - Open [http://192.168.7.2:8000](http://192.168.7.2:8000) in a browser.
+
+
 
 #### Production mode
 

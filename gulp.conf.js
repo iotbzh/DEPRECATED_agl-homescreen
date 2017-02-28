@@ -26,10 +26,30 @@ module.exports = {
   },
 
   deploy: {
+    target_ip: 'qemu',
+    port: null,
+    dir: 'agl-homescreen'
+  },
+
+  /* SEB
+  deploy: {  // VBOX_qemu
     target_ip: '127.0.0.1',
     port: '4444',
     dir: 'agl-homescreen'
   },
+
+  deploy: { // qemu: 192.168.7.2
+    target_ip: 'qemu',
+    port: null,
+    dir: 'agl-homescreen'
+  },
+
+  deploy: { // porter: 10.20.1.76
+    target_ip: 'porter',
+    dir: 'agl-homescreen'
+  },
+  */
+
   inlineTemplate: {
     base: '/src',
     target: 'es6',

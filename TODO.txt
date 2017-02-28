@@ -1,0 +1,26 @@
+
+
+Seb's TODO:
+- missing '| translate' in login.component.html and maybe other html files
+
+- gulp: urglify + sourcemaps doesn't allow to debug (sources out of sync ?)
+*- add default icon for app without icon
+- Implement getDetails and populate this.detailsApp
+- terminal
+
+Question Fulup / Jose:
+ - "application-list-changed" => useful if know what's changed
+ - Pb icons:
+   - la pluspart des apps n'ont pas d'icons (liens non valides)
+   - icon hvac@0.1 contient le nom HVAC en bas de l'icon => doublon avec le nom que l'on affiche
+
+ - token passer dans les cookies ?
+ - terminal possible via WS mais il faut la partie serveur
+  + hterm
+  https://chromium.googlesource.com/apps/libapps/+/master/hterm
+  ou
+   https://www.packtpub.com/books/content/making-simple-web-based-ssh-client-using-nodejs-and-socketio)
+
+Jose fix afb-dameon
+OK - crash HTTP OPTION request
+?? - install app already installed => invalid error : == invalid token
