@@ -156,7 +156,7 @@ export class AfmMainService {
     }
 
     public startApp(app) {
-        this._sendMessage('once', app);
+        this._sendMessage('start', app);
     }
 
     public getRunnables(forceRefresh?: boolean) {
