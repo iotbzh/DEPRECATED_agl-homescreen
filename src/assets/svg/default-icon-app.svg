@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg2"
+   style="fill: transparent;"
+   viewBox="50 25 220 220"
+   version="1.1">
+  <metadata
+     id="metadata60">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs58">
+    <linearGradient
+       gradientTransform="translate(-175.33851,-17.138351)"
+       y2="125.3968"
+       x2="168.278"
+       y1="125.3968"
+       x1="149.06081"
+       gradientUnits="userSpaceOnUse"
+       id="SVGID_97_">
+      <stop
+         id="stop20"
+         style="stop-color:#59FF7F"
+         offset="0" />
+      <stop
+         id="stop22"
+         style="stop-color:#6BFBFF"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="133.64999"
+       x2="227.83849"
+       y1="133.64999"
+       x1="91.461525"
+       id="linearGradient5600"
+       xlink:href="#SVGID_96_" />
+  </defs>
+  <style
+     id="style4"
+     type="text/css">
+    .st104{fill:url(#SVGID_96_);}
+    .st105{fill:url(#SVGID_97_);}
+    .st106{fill:url(#SVGID_98_);}
+    .st107{fill:url(#SVGID_99_);}
+    .st108{fill:url(#SVGID_100_);}
+    .st109{fill:url(#SVGID_101_);}
+  </style>
+  <g
+     id="g8">
+    <linearGradient
+       id="SVGID_96_"
+       gradientUnits="userSpaceOnUse"
+       x1="3.7033"
+       y1="287.95099"
+       x2="320.14111"
+       y2="-15.4011"
+       gradientTransform="matrix(1,0.00546456,-0.00546456,1,-2.0192,-3.0212)">
+      <stop
+         offset="0"
+         style="stop-color:#59FF7F"
+         id="stop11" />
+      <stop
+         offset="1"
+         style="stop-color:#6BFBFF"
+         id="stop13" />
+    </linearGradient>
+    <path
+       class="st104"
+       d="m 159.7,238.8 c -0.2,0 -0.4,0 -0.6,0 C 101.1,238.5 54.2,191.1 54.5,133.1 54.8,75.3 101.9,28.5 159.6,28.5 c 0.2,0 0.4,0 0.6,0 58,0.3 104.9,47.7 104.6,105.7 l 0,0 C 264.5,192 217.4,238.8 159.7,238.8 Z M 159.6,32.2 C 104,32.2 58.5,77.3 58.2,133.1 c -0.3,55.9 45,101.7 100.9,102 0.2,0 0.4,0 0.6,0 55.7,0 101.2,-45.2 101.5,-100.9 0.3,-55.9 -45,-101.7 -100.9,-102 -0.3,0 -0.5,0 -0.7,0 z"
+       id="path15"
+       style="fill:url(#SVGID_96_)" />
+  </g>
+  <text
+     id="text3474"
+     y="157.72958"
+     x="91.324806"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient5600);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-rule:nonzero;"
+     xml:space="preserve"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill-opacity:1;fill:url(#linearGradient5600);fill-rule:nonzero;"
+       y="157.72958"
+       x="91.324806"
+       id="tspan3476">APP</tspan></text>
+</svg>

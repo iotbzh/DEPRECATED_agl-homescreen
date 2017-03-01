@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
+import { Http, Response } from '@angular/http';
 import { Subject } from "rxjs/Subject";
+import { Observable } from 'rxjs/Observable';
 
 import { WebSocketService, IOpened } from "./websocket.service";
 import { AfbContextService } from "./afbContext.service";
@@ -22,17 +24,18 @@ export interface App {
 @Injectable()
 export class AfmMainService {
     public connectionState: Subject<IOpened> = new Subject<IOpened>();
-    public startAppResponse: Subject<{apps:App[], res:Object}> = new Subject<{apps:App[], res:Object}>();
+    public startAppResponse: Subject<{ apps: App[], res: Object }> = new Subject<{ apps: App[], res: Object }>();
     public detailsResponse: Subject<Object> = new Subject();
     public runnablesResponse: Subject<App[]> = new Subject<App[]>();
     public startOnceResponse: Subject<Object> = new Subject();
     public eventsResponse: Subject<Object> = new Subject();
     public requestResponse: Subject<Object> = new Subject();
 
+    private readonly baseLocalIconUrl = './assets/svg/';
     private apps: Array<App> = [];
 
     constructor(private webSocketService: WebSocketService,
-        private afbContextService: AfbContextService) {
+        private afbContextService: AfbContextService, private http: Http) {
 
         this.webSocketService.opened.subscribe((state: IOpened) => {
             this.connectionState.next(state);
@@ -60,7 +63,7 @@ export class AfmMainService {
                 case "start":
                     let app = response.app;
                     this.apps.filter(r => r.id == app.id)[0].isRunning = app.isRunning;
-                    this.startAppResponse.next({apps: this.apps, res: response.data});
+                    this.startAppResponse.next({ apps: this.apps, res: response.data });
                     break;
 
                 case "once":
@@ -116,7 +119,7 @@ export class AfmMainService {
         }
 
         // hardcode some icon (local image)
-        switch(app.name) {
+        switch (app.name) {
             case 'hvac':
             case 'navigation':
             case 'phone':
@@ -126,8 +129,8 @@ export class AfmMainService {
             case 'dashboard':
             case 'settings':
             case 'point':
-                app.iconUrl = './assets/svg/' + app.name + '-circle.svg';
-            break;
+                app.iconUrl = this.baseLocalIconUrl + app.name + '-circle.svg';
+                break;
         }
 
         this.update(app.id, app);
@@ -160,7 +163,7 @@ export class AfmMainService {
     }
 
     public getRunnables(forceRefresh?: boolean) {
-        let frRsh = forceRefresh || false
+        let frRsh = forceRefresh || false
         if (!frRsh && this.apps && this.apps.length > 0)
             this.runnablesResponse.next(this.apps);
         else
@@ -194,5 +197,17 @@ export class AfmMainService {
 
     public restartConnection(resetToken?: boolean): void {
         this.webSocketService.restart(resetToken);
+    }
+
+    public isIconValid(app): Observable<boolean> {
+        if (!app.iconUrl)
+            return Observable.of(false);
+
+        if (app.iconUrl.startsWith(this.baseLocalIconUrl))
+            return Observable.of(true);
+
+        return this.http.get(app.iconUrl)
+            .map((res: Response) => (res && res.ok) )
+            .catch(() => Observable.of(false) );
     }
 }

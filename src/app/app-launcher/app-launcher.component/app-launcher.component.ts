@@ -29,9 +29,23 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.afmMainService.runnablesResponse.subscribe((response: App[]) => {
             this.apps = response;
-            this.apps.forEach((elem) => elem.extend = {
-                isPressed: false,
-             });
+            this.apps.forEach((elem) => {
+                elem.extend = {
+                    isPressed: false,
+                };
+
+                // Set default icon when icon is not valid / doesn't exist
+                this.afmMainService.isIconValid(elem).subscribe(
+                    result => {
+                        if (!result)
+                            this.setDefaultIcon(elem);
+                    },
+                    error => {
+                        console.error('Error=', error);
+                        this.setDefaultIcon(elem)
+                    }
+                );
+            });
         });
 
         this.afmMainService.startOnceResponse.subscribe((response: any) => {
