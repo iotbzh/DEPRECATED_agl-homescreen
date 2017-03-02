@@ -42,13 +42,37 @@ bower update
 ### Building the project in development mode
 
 #### Development mode on host with (fallback) dev-server
-```
-gulp            # compile and start gulp watch for development
-npm run server  # to start up dev-server
-```
-Open [http://localhost:8000](http://localhost:8000) in a browser.
 
-Use [http://localhost:8000/#/event-emitter](http://localhost:8000/#/event-emitter) url for emitting login/logout events
+  - Setup `gulp.config.js` file:
+    ```
+    ...
+    deploy: {
+      target_ip: 'localhost',
+      port: '5000',
+      dir: 'agl-homescreen'
+    },
+    ....
+    ```
+
+  - Setup `src/environments/environment.ts` file:
+    ```
+    ....
+	service: {
+        ip: null,           // dynamically set when set to null (see main.ts)
+        port: 5000,         // dynamically set when set to null (see main.ts)
+        api_url: "/api",
+    },
+    ....
+    ```
+  - Start compile code and start dev-server
+    ```
+    gulp            # compile and start gulp watch for development
+    npm run server  # to start up dev-server (AKA fake server)
+    ```
+
+  - Open [http://localhost:8000](http://localhost:8000) in a browser.
+
+*Note:* Use [http://localhost:8000/#/event-emitter](http://localhost:8000/#/event-emitter) url for emitting login/logout events
 
 
 #### Development mode deployed on a target

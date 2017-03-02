@@ -14,7 +14,7 @@ module.exports = function (wss, ws) {
       wss.clients.forEach(function each(client) {
         if (client !== ws)
           client.send(
-              JSON.stringify({
+              helper.formatRes({
                 type: "logged-in",
                 data: {
                   account: helper.currentAccountMocked
@@ -30,7 +30,7 @@ module.exports = function (wss, ws) {
       wss.clients.forEach(function each(client) {
         if (client !== ws)
           client.send(
-              JSON.stringify({
+              helper.formatRes({
                 type: "logged-out",
                 data: helper.currentAccountMocked
               })

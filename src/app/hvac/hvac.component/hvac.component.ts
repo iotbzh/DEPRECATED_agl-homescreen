@@ -34,17 +34,13 @@ export class HvacComponent implements OnInit, OnDestroy, WebSocketHandler {
   }
 
   ngOnDestroy(){
-    this.socket.send(JSON.stringify({
-      api: 'hvac/off'
-    }));
+    this.socket.send(JSON.stringify(['hvac_chan', 0, 'hvac/off', null]));
     this.socket.close();
   }
 
   onWSOpen(): void {
     console.log("HVAC websocket is open");
-    this.socket.send(JSON.stringify({
-      api: 'hvac/on'
-    }));
+    this.socket.send(JSON.stringify(['hvac_chan', 0, 'hvac/on', null]));
   }
 
   onWSClose(): void {
@@ -52,7 +48,8 @@ export class HvacComponent implements OnInit, OnDestroy, WebSocketHandler {
   }
 
   onWSMessageReceive(res): void {
-    let response = JSON.parse(res.data);
+    let data = JSON.parse(res.data);
+    let response = data[2].response;
 
     switch (response.type) {
       case "speed-change":

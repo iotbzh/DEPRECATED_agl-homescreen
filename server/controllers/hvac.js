@@ -1,5 +1,7 @@
 "use strict";
 
+const helper = require("./../helpers");
+
 let speedInterval;
 let milleageInterval;
 let leftFrontInterval;
@@ -10,12 +12,12 @@ let rightRearInterval;
 module.exports = function (wss, ws) {
 
   return {
-    turnOn: function () {
+    turnOn: function (req) {
       speedInterval = setInterval(() => {
         const min = 20;
         const max = 250;
         let value = Math.floor(Math.random() * (max - min + 1)) + min;
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "speed-change",
           value: value,
         }));
@@ -30,7 +32,7 @@ module.exports = function (wss, ws) {
         } else {
           mileageValue = minMileage;
         }
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "mileage-change",
           value: mileageValue,
         }));
@@ -40,7 +42,7 @@ module.exports = function (wss, ws) {
         const min = 20;
         const max = 250;
         let value = Math.floor(Math.random() * (max - min + 1)) + min;
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "left-front-change",
           value: value
         }));
@@ -50,7 +52,7 @@ module.exports = function (wss, ws) {
         const min = 20;
         const max = 250;
         let value = Math.floor(Math.random() * (max - min + 1)) + min;
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "left-rear-change",
           value: value
         }));
@@ -60,7 +62,7 @@ module.exports = function (wss, ws) {
         const min = 20;
         const max = 250;
         let value = Math.floor(Math.random() * (max - min + 1)) + min;
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "right-front-change",
           value: value
         }));
@@ -70,7 +72,7 @@ module.exports = function (wss, ws) {
         const min = 20;
         const max = 250;
         let value = Math.floor(Math.random() * (max - min + 1)) + min;
-        ws.send(JSON.stringify({
+        ws.send(helper.formatRes(req, "success", {
           type: "right-rear-change",
           value: value
         }));
