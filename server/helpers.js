@@ -1,4 +1,5 @@
 "use strict";
+const conf = require("./conf");
 
 let helperModule = {};
 
@@ -46,5 +47,10 @@ helperModule.formatRes = function (req, status, res, request) {
         ]
     );
 };
+
+helperModule.DEBUG = function() {
+    if (conf.debug)
+        console.log.apply(null, arguments);
+}
 
 module.exports = helperModule;

@@ -1,17 +1,19 @@
 "use strict";
 
 module.exports = function (wss, ws, req) {
+    const DEBUG = require('../helpers').DEBUG;
     const authController = require('./auth-controller')(wss, ws);
     const afmMainController = require('./afm-main')(wss, ws);
     const aglIdentityController = require('./agl-identity')(wss, ws);
     const hvacController = require('./hvac')(wss, ws);
+
     if (req && req.length > 2) {
         let enterPoint = req[2].split('/');
         let controller = enterPoint[0];
         let action = enterPoint[1];
         let param = req[3];
 
-        console.debug('RECV: controller=', controller, ' action=', action);
+        DEBUG('RECV: controller=', controller, ' action=', action);
 
         switch (controller) {
             case 'auth':
@@ -69,7 +71,7 @@ module.exports = function (wss, ws, req) {
                 throw new Error('No such a controller');
         }
     } else {
-        console.error('req=', req);
+        DEBUG('ERROR req=', req);
         throw new Error("Api is not provided in request");
     }
 };

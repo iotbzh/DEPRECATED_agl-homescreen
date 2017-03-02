@@ -7,12 +7,14 @@ const http = require("http").Server(app);
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const WebSocketServer = require("ws").Server;
+const DEBUG = require('./helpers').DEBUG;
+
 const protos = [ "x-afb-ws-json1" ];
 const wss = new WebSocketServer({server: http}, protos);
 let connections = [];
 
 function checkAuth(req, res, next) {
-  console.log('checkAuth ' + req.url);
+  DEBUG('checkAuth ' + req.url);
 
   // don't serve those not logged in
   if (req.url !== '/login' && (!req.session || !req.session.authenticated)) {
@@ -42,10 +44,10 @@ app.set('view engine', 'pug');
 //WEBSOCKET DECLARATION
 wss.on("connection", (ws) => {
   connections.push(ws);
-  console.log(`User connected! ${connections.length} socket(s) are connected now`);
+  DEBUG(`User connected! ${connections.length} socket(s) are connected now`);
 
   ws.on('message', function (message) {
-    // console.log('received: %s', message);
+    DEBUG('WS received: %s', message);
 
     //WEBSOCKET CONTROLLERS
     require('./controllers/front-controller')(wss, ws, JSON.parse(message));
@@ -54,7 +56,7 @@ wss.on("connection", (ws) => {
 
   ws.on("close", function () {
     connections.splice(connections.indexOf(ws), 1);
-    console.log(`User disconnected! ${connections.length} socket(s) are connected now`);
+    DEBUG(`User disconnected! ${connections.length} socket(s) are connected now`);
   });
 });
 

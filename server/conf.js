@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = {
+  debug: true,
   port: 5000,
   token: 'secret_jwt_token',
   mockApps: [
