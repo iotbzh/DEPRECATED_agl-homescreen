@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Subject } from "rxjs/Subject";
 import { Observable } from 'rxjs/Observable';
 
-import { WebSocketService, IOpened } from "./websocket.service";
+import { WebSocketService, IOpened, IMessage } from "./websocket.service";
 import { AfbContextService } from "./afbContext.service";
 
 export interface App {
@@ -17,6 +17,8 @@ export interface App {
     authRequired?: boolean;
     iconUrl?: string;
     isRunning?: boolean;
+    runId?: number,
+    runUri?: string,
     isInstalled?: boolean,
     extend?: any,
 }
@@ -24,7 +26,8 @@ export interface App {
 @Injectable()
 export class AfmMainService {
     public connectionState: Subject<IOpened> = new Subject<IOpened>();
-    public startAppResponse: Subject<{ apps: App[], res: Object }> = new Subject<{ apps: App[], res: Object }>();
+    public startAppResponse: Subject<{ apps: App[], app: App, res: Object }> = new Subject<{ apps: App[], app: App, res: Object }>();
+    public stopAppResponse: Subject<{ apps: App[], app: App, res: Object }> = new Subject<{ apps: App[], app: App, res: Object }>();
     public detailsResponse: Subject<Object> = new Subject();
     public runnablesResponse: Subject<App[]> = new Subject<App[]>();
     public startOnceResponse: Subject<Object> = new Subject();
@@ -41,12 +44,14 @@ export class AfmMainService {
             this.connectionState.next(state);
         });
 
-        this.webSocketService.message.subscribe((response: any) => {
+        this.webSocketService.message.subscribe((response: IMessage) => {
+            let req = response.req;
+            let res = response.res;
             switch (response.type) {
                 case "runnables":
-                    if (response.data && response.data.apps && response.data.apps instanceof Array) {
+                    if (res && res.apps && res.apps instanceof Array) {
                         // FIXME removed
-                        response.data.apps.forEach(m => this._updateApps(m));
+                        res.apps.forEach(m => this._updateApps(m));
 
                     } else {
                         console.error('Invalid runnables response (not an Array)', response);
@@ -56,26 +61,44 @@ export class AfmMainService {
 
                 case "details":
                     // TODO
-                    // this.detailsApp[appId] = response.data;
-                    this.detailsResponse.next(response.data);
+                    // this.detailsApp[appId] = res;
+                    this.detailsResponse.next(res);
                     break;
 
                 case "start":
-                    let app = response.app;
-                    this.apps.filter(r => r.id == app.id)[0].isRunning = app.isRunning;
-                    this.startAppResponse.next({ apps: this.apps, res: response.data });
+                    let el: App[] = this.apps.filter(r => r.id == req.id);
+                    if (! (el && el.length)) {
+                        console.error('Response error: cannot retrieve app id ', req.id);
+                        break;
+                    }
+                    el[0].isRunning = true;
+                    el[0].runId = res.runid;
+                    el[0].runUri = res.uri.replace("%h", this.afbContextService.targetHostIp);
+                    this.startAppResponse.next({ apps: this.apps, app: el[0], res: res });
                     break;
 
                 case "once":
-                    this.startOnceResponse.next(response.data);
+                    this.startOnceResponse.next(response);
                     break;
 
                 case "event":
                     this.eventsResponse.next(response);
                     break;
 
-                case "request":
-                    this.requestResponse.next(response.data);
+                case "response":
+                    if (req.runid) {
+                        let el = this.apps.filter(r => r.runId == req.runid);
+                        if (! (el && el.length)) {
+                            console.error('Response error: cannot retrieve app runid ', req.runid);
+                            break;
+                        }
+                        el[0].isRunning = false;
+                        delete el[0].runId;
+                        delete el[0].runUri;
+                        this.stopAppResponse.next({ apps: this.apps, app: el[0], res: res });
+                    } else {
+                        this.requestResponse.next(response);
+                    }
                     break;
 
                 default: break;
@@ -136,14 +159,9 @@ export class AfmMainService {
         this.update(app.id, app);
     }
 
-    private _sendMessage(cmd, app?) {
-        if (app && !app.id)
-            console.error('Invalid app.id');
-
-        let msg = { api: "afm-main/" + cmd };
-        if (app)
-            msg['id'] = app.id;
-
+    private _sendMessage(cmd, args?) {
+        let msg = args || {};
+        msg.api = "afm-main/" + cmd;
         this.webSocketService.sendMessage(JSON.stringify(msg));
     }
 
@@ -158,8 +176,15 @@ export class AfmMainService {
         return this.apps;
     }
 
-    public startApp(app) {
-        this._sendMessage('start', app);
+    public startApp(app, mode?: string) {
+        let md = mode || 'auto';
+        this._sendMessage('start', { id: app.id, mode: md });
+    }
+
+    public stopApp(app) {
+        if (!app.runId)
+            console.error('Invalid runId ', app);
+        this._sendMessage('terminate', { runid: app.runId });
     }
 
     public getRunnables(forceRefresh?: boolean) {

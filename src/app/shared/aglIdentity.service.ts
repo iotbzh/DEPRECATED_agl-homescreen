@@ -1,7 +1,7 @@
 import { Injectable }              from "@angular/core";
 import { Subject }                 from "rxjs/Subject";
 
-import { WebSocketService }        from "./websocket.service";
+import { WebSocketService, IMessage } from "./websocket.service";
 
 @Injectable()
 export class AglIdentityService {
@@ -10,14 +10,14 @@ export class AglIdentityService {
     public loginResponse : Subject<Object> = new Subject();
 
     constructor(private webSocketService: WebSocketService){
-        this.webSocketService.message.subscribe( ( response: any ) => {
+        this.webSocketService.message.subscribe( ( response: IMessage ) => {
             switch (response.type) {
                 case "logged-in":
-                    this.loginResponse.next(response.data);
+                    this.loginResponse.next(response.res);
                     break;
                 case "logged-out":
                     // // @todo agl-identity/logout
-                    this.logoutResponse.next(response.data);
+                    this.logoutResponse.next(response.res);
                     break;
                 default: break;
             }

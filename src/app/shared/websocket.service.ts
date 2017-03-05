@@ -13,6 +13,20 @@ export interface IOpened {
     error?: string;
 }
 
+export interface IRequest {
+    id: string,
+    method: string,
+    request: string
+}
+
+export interface IMessage {
+    type: string,
+    original_request: any,
+    event?: string,
+    req: any,
+    res: any
+}
+
 @Injectable()
 export class WebSocketService {
 
@@ -27,10 +41,12 @@ export class WebSocketService {
     private socket: Subscription;
     private baseUrl: string;
     private afbCtx: AfbContextService;
-    private reqId = 0;
+    private readonly reqIdBase: string = <string><any>(Math.floor(Math.random() * 10e6));
+    private reqId: number = 0;
+    private requests: Array<IRequest>;
     private connectRetry = 0;
 
-    public message: Subject<Object> = new Subject();
+    public message: Subject<IMessage> = new Subject<IMessage>();
     public opened: Subject<IOpened> = new Subject<IOpened>();
 
     constructor(private AfbContextService: AfbContextService) {
@@ -41,6 +57,7 @@ export class WebSocketService {
     };
 
     private _openWS() {
+        this.requests = [];
         this.ws = new WebSocketSubject({
             url: this.afbCtx.getUrl('ws'),
             protocol: this.ws_sub_protos,
@@ -58,7 +75,12 @@ export class WebSocketService {
             next: (data: MessageEvent) => this._onReceiveMessage(data),
             error: (err) => this._onError(err),
             complete: () => {
-                this.message.next({ type: 'closed' });
+                this.message.next({
+                    type: 'closed',
+                    original_request: null,
+                    req: null,
+                    res: null
+                });
             }
         });
 
@@ -94,11 +116,13 @@ export class WebSocketService {
     }
 
     public call(method, request): void {
-        this.reqId += 1;
-        let data = JSON.stringify([this.CALL, this.reqId, method, request]);
+        let requestId = this.reqIdBase + '_' + this.reqId;
+        let data = JSON.stringify([this.CALL, requestId, method, request]);
+        this.requests[requestId] = { id: requestId, method: method, request: request };
         if (environment.debug)
-            console.debug('WS SEND: ' + data);
+            console.debug('WS SEND (' + requestId + '): ' + data);
         this.ws.next(data);
+        this.reqId += 1;
     }
 
     private _onReceiveMessage(data: MessageEvent): void {
@@ -114,25 +138,50 @@ export class WebSocketService {
             console.log(err);
         }
 
-        let recvMsg;
+        let recvMsg: IMessage = <IMessage>{};
 
         switch (ans.jtype) {
             case 'afb-reply':
-                recvMsg = this._decode_afb_reply(ans, req);
+                let rep = this._decode_afb_reply(ans, req);
+                recvMsg.type = rep.type;
+                recvMsg.res = rep.res;
+
+                // Retrieve request parameters with id
+                if (this.requests[id] == null)
+                    console.error('ERROR unknown id ', id, ' in ', this.requests);
+
+                recvMsg.req = this.requests[id].request || {};
+                recvMsg.original_request = this.requests[id];
+
+                delete this.requests[id];
                 break;
+
             case 'afb-event':
                 recvMsg = ans;
-                recvMsg['type'] = 'event';
-                recvMsg['event'] = recvMsg['event'].replace(/^afm-main\//g, '');
+                recvMsg.type = 'event';
+                recvMsg.event = recvMsg.event.replace(/^afm-main\//g, '');
                 break;
+
             default:
+                console.error('Unsupported jtype: ', ans.jtype);
                 recvMsg = ans;
         }
-        this.message.next(recvMsg);
+
+        if (recvMsg.type == 'response' && recvMsg.res.token) {
+            this.afbCtx.startRefresh(req, this);
+            this.opened.next({ isOpened: true });
+        } else {
+            this.message.next(recvMsg);
+        }
     }
 
     private _onError(err) {
-        this.message.next({ type: 'closed' });
+        this.message.next({
+            type: 'closed',
+            original_request: null,
+            req: null,
+            res: null
+        });
         this.socket.unsubscribe();
 
         let msgErr;
@@ -146,54 +195,55 @@ export class WebSocketService {
             setTimeout(() => this._openWS(), 1000);
 
             this.connectRetry += 1;
-            if (this.connectRetry == this.MAX_CONNECTION_RETRY/2)
+            if (this.connectRetry == this.MAX_CONNECTION_RETRY / 2)
                 this.afbCtx.resetToInitialToken();
         }
 
         this.opened.next({
             isOpened: false,
             remainingRetry: this.MAX_CONNECTION_RETRY - this.connectRetry,
-            error: msgErr });
+            error: msgErr
+        });
     }
 
     private _decode_afb_reply(ans, req) {
-        let res = ans;
+        let result = ans;
 
         if (ans.response) {
-            if (ans.response.token) {
-                if (/New Token/.test(ans.response.token)) {
-                    this.afbCtx.startRefresh(req, this);
-                    this.opened.next({ isOpened: true });
-                }
-                else if (/Token was refreshed/.test(ans.response.token)) {
-                    res = {
-                        type: "New Token",
-                        token: req.token
-                    }
+            if (/Token was refreshed/.test(ans.response.token)) {
+                result = {
+                    type: "New Token",
+                    res: { token: req.token }
                 }
             }
             else if (ans.response.runnables) {
-                res = {
+                result = {
                     type: "runnables",
-                    data: { apps: ans.response.runnables }
+                    res: { apps: ans.response.runnables }
                 };
-            } else if (ans.response.start) {
-                res = {
+            }
+            else if (ans.response.runid) {
+                result = {
                     type: "start",
-                    data: {
-                        app: ans.response.app
-                    }
+                    res: ans.response
                 };
+            }
+            // handle afb-reply type request success
+            else if (ans.request) {
+                result = {
+                    type: "response",
+                    res: ans.request
+                }
             }
         }
         else if (ans.request) {
             // handle afb-reply type request failed
-            res = {
-                type: "request",
-                data: ans.request
+            result = {
+                type: "response",
+                res: ans.request
             }
         }
 
-        return res;
+        return result;
     }
 }

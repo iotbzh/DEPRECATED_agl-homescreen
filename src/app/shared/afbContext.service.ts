@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { environment } from "../../environments/environment";
-import { WebSocketService } from "./websocket.service";
+import { WebSocketService, IMessage } from "./websocket.service";
 
 @Injectable()
 export class AfbContextService {
@@ -58,6 +58,8 @@ export class AfbContextService {
 
     get httpBaseUrl(): string { return 'http://' + this.baseUrl };
 
+    get targetHostIp(): string { return this._service.ip };
+
     public getUrl(proto: string, method?: string): string {
         let url = (proto == 'http') ? this.httpBaseUrl : this.wsBaseUrl;
         if (method)
@@ -85,7 +87,7 @@ export class AfbContextService {
             while (c.charAt(0) == ' ') c = c.substring(1);
             if (c.indexOf(name) == 0) {
                 var ret = c.substring(name.length, c.length);
-                if (ret == 'null') return null;
+                if (ret != 'null') return ret;
             }
         }
         return null;
@@ -130,9 +132,9 @@ export class AfbContextService {
         if (req && req.uuid)
             this.uuid = req.uuid;
 
-        this._ws.message.subscribe((response: any) => {
-            if (response.type && response.type == 'New Token' && response.token)
-                self.token = response.token;
+        this._ws.message.subscribe((response: IMessage) => {
+            if (response.type == 'New Token' && response.res.token)
+                self.token = response.res.token;
         });
 
         this._tmoInterval = setInterval(

@@ -32,18 +32,18 @@
                     </td>
                     <td>{{ app?.version }}</td>
                     <td class="text-center">
-                        <span *ngIf="app.isRunning"><i class="fa fa-spinner"></i></span>
-                        <span *ngIf="app.isInstalled"><i class="fa fa-check"></i></span>
+                        <span *ngIf="app.isInstalled && app.isRunning"><i class="fa fa-spinner"></i></span>
+                        <span *ngIf="app.isInstalled && !app.isRunning"><i class="fa fa-check"></i></span>
                         <span *ngIf="!app.isInstalled && app.extend.installProgress < 0"><i class="fa fa-ban"></i></span>
                         <span *ngIf="app.extend.installProgress >= 0">{{"APPS_MGT.INSTALLING" | translate}} {{app.extend.installProgress}}%</span>
                         <span *ngIf="app.extend.isError"><i class="fa fa-remove"></i></span>
                     </td>
                     <td nowrap>
-                        <!-- SEB TODO <info-app> </info-app> -->
+                        <!-- TODO: add <info-app> </info-app> -->
                         <button *ngIf="!app.isInstalled" type="button" class="button tiny" (click)="installApp(app)">
                             <span class="fa fa-upload"></span> {{"APPS_MGT.BUTTON_INSTALL" | translate}}
                         </button>
-                        <button *ngIf="app.isInstalled" type="button" class="button alert tiny" (click)="uninstallApp(app)">
+                        <button *ngIf="app.isInstalled" [disabled]="app.isRunning" type="button" class="button alert tiny" (click)="uninstallApp(app)">
                             <span class="fa fa-trash"></span> {{"APPS_MGT.BUTTON_DELETE" | translate}}
                         </button>
                     </td>

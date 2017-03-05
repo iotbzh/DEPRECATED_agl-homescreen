@@ -83,11 +83,11 @@ export class AppManagerComponent implements OnInit, OnDestroy {
 
         /* Request */
         this.afmMainService.requestResponse.subscribe((response: any) => {
-            if (response.status == 'failed') {
+            if (response.res.status == 'failed') {
                 this.notifier = {
                     show: true,
                     title: 'ERROR',
-                    text: response.info || 'Unknown error !\n' + JSON.stringify(response),
+                    text: response.res.info + '!' || 'Unknown error !\n' + JSON.stringify(response),
                 }
             }
         });
@@ -100,11 +100,11 @@ export class AppManagerComponent implements OnInit, OnDestroy {
         // this.aglIdentityService.logoutResponse.unsubscribe();
     }
 
-    uninstallApp(app): void {
+    uninstallApp(app: App): void {
         this.afmMainService.deleteApp(app);
     }
 
-    installApp(app): void {
+    installApp(app: App): void {
         let url = this.afCtx.getUrl('http', 'afm-main/install');
         this.uploader.queue.forEach((item) => {
             if (app.filename != item.file.name)
@@ -166,6 +166,22 @@ export class AppManagerComponent implements OnInit, OnDestroy {
     /*private*/ _upLoad_onCompleteItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any {
         if (environment.debug)
             console.debug('Upload Complete item', item, response, status);
+
+        if (response) {
+            try {
+                let res = JSON.parse(response);
+                if (res.request && res.request.status == "failed") {
+                    this.notifier = {
+                        show: true,
+                        title: 'UPLOAD ERROR',
+                        text: res.request.info || 'Unknown error !\n' + JSON.stringify(res),
+                    }
+                }
+            }
+            catch(err) {
+                console.error(err);
+            }
+        }
 
         // FIXME - hack
         // Remove temporary entry because install widget may have

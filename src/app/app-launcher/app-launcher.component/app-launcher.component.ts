@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { AfmMainService, App } from "../../shared/afmMain.service";
 import { AglIdentityService } from "../../shared/aglIdentity.service";
+import { environment } from "../../../environments/environment";
 
 interface INotifier {
     show: boolean;
@@ -53,7 +54,35 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
         });
 
         this.afmMainService.startAppResponse.subscribe(
-            (response:{apps:App[], res:Object}) => this.apps = response.apps
+            (response: { apps: App[], app: App, res: Object }) => {
+                this.apps = response.apps;
+                if (response.app.runUri) {
+                    // Open app in a new tab
+                    let self = this;
+                    let app = response.app;
+                    if (environment.debug) {
+                        console.debug("Open apps: ", response.app.runUri);
+                    }
+                    let appTab = window.open(response.app.runUri, '_blank');
+                    // Let's some time to launch app on target
+                    setTimeout(() => {
+                        // Check if popup blocker is enabled by verifying the height of the new popup
+                        if (!appTab || appTab.outerHeight === 0) {
+                            alert("Please disable the popup blocker");
+                        } else {
+                            appTab.onbeforeunload = () => self.afmMainService.stopApp(app);
+                            appTab.onerror = (err) => console.error(err);
+                        }
+                    }, 3000);   // FIXME: removed hard-coded value
+                    if (appTab) {
+                        appTab.onerror = (err) => console.error(err);
+                    }
+                }
+            }
+        );
+
+        this.afmMainService.stopAppResponse.subscribe(
+            (response: { apps: App[], app: App, res: Object }) => this.apps = response.apps
         );
 
         this.aglIdentityService.loginResponse.subscribe((response: any) => {
@@ -71,11 +100,17 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
 
         /* Request */
         this.afmMainService.requestResponse.subscribe((response: any) => {
-            if (response.status == 'failed') {
+            if (response.res.status == 'failed') {
+
+                // FIXME: start in remote mode is only supported for HTML apps
+                // Find a way to determine which kind of apps before starting
+                if (response.res.info == "can't start")
+                    response.res.info = "can't start this app in remote mode"
+
                 this.notifier = {
                     show: true,
                     title: 'ERROR',
-                    text: response.info || 'Unknown error !\n' + JSON.stringify(response),
+                    text: response.res.info + '!' || 'Unknown error !\n' + JSON.stringify(response),
                 }
             }
         });
@@ -89,7 +124,10 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
     }
 
     runApp(event, app) {
-        this.afmMainService.startApp(app);
+        if (app.isRunning)
+            this.afmMainService.stopApp(app);
+        else
+            this.afmMainService.startApp(app, "remote");
     }
 
     confirmPopup() {
