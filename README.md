@@ -131,8 +131,13 @@ You can use a real target (raspi3, porter, ...) or a qemu.
     rpm -ihv af-main-binding-1.0-r0.core2_64.rpm
 
     # Start app on target
-    /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen  --sessiondir=/tmp/.afb-daemon --mode=remote --token=123456789 --roothttp=. --alias=/icons:/var/lib/afm/icons
+    /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen --mode=remote --token=123456789 --roothttp=. --alias=/icons:/var/local/lib/afm/icons
     ```
+
+ > NOTES: for old AGL version (previous DD version), command line should be:
+ > ```
+ > /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen --mode=remote --token=123456789 --roothttp=. --alias=/icons:/var/lib/afm/icons --sessiondir=/tmp/.afb-daemon
+`> ``
 
     Following options may be added to `afb-daemon` command to help debugging:
     `-vvv` and/or `--tracereq=all`

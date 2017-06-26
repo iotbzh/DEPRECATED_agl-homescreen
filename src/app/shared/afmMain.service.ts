@@ -67,13 +67,15 @@ export class AfmMainService {
 
                 case "start":
                     let el: App[] = this.apps.filter(r => r.id == req.id);
-                    if (! (el && el.length)) {
+                    if (!(el && el.length)) {
                         console.error('Response error: cannot retrieve app id ', req.id);
                         break;
                     }
                     el[0].isRunning = true;
                     el[0].runId = res.runid;
-                    el[0].runUri = res.uri.replace("%h", this.afbContextService.targetHostIp);
+                    if (res.uri) {
+                        el[0].runUri = res.uri.replace("%h", this.afbContextService.targetHostIp);
+                    }
                     this.startAppResponse.next({ apps: this.apps, app: el[0], res: res });
                     break;
 
@@ -88,7 +90,7 @@ export class AfmMainService {
                 case "response":
                     if (req.runid) {
                         let el = this.apps.filter(r => r.runId == req.runid);
-                        if (! (el && el.length)) {
+                        if (!(el && el.length)) {
                             console.error('Response error: cannot retrieve app runid ', req.runid);
                             break;
                         }
@@ -108,17 +110,17 @@ export class AfmMainService {
 
     private _updateApps(elem: any): void {
         let app: App = {
-            id:             elem.id,
-            name:           elem.name,
-            shortname:      elem.shortname,
-            version:        elem.version,
-            author:         elem.author,
-            description:    elem.description,
-            filename:       '',
-            authRequired:   false,
-            iconUrl:        'icons/' + elem.id + '?token=' + this.afbContextService.token,
-            isRunning:      false,
-            isInstalled:    true,
+            id: elem.id,
+            name: elem.name,
+            shortname: elem.shortname,
+            version: elem.version,
+            author: elem.author,
+            description: elem.description,
+            filename: '',
+            authRequired: false,
+            iconUrl: 'icons/' + elem.id + '?token=' + this.afbContextService.token,
+            isRunning: false,
+            isInstalled: true,
         };
 
         // Rename some apps
@@ -232,7 +234,7 @@ export class AfmMainService {
             return Observable.of(true);
 
         return this.http.get(app.iconUrl)
-            .map((res: Response) => (res && res.ok) )
-            .catch(() => Observable.of(false) );
+            .map((res: Response) => (res && res.ok))
+            .catch(() => Observable.of(false));
     }
 }
