@@ -16,5 +16,5 @@
 
 </main>
 <pop-up [title]="notifier.title" [text]="notifier.text" [timeout]="notifier.timeout" [showTimeout]="(notifier.timeout > 0)" [cancelButton]=false (onConfirm)="confirmPopup()" *ngIf="notifier.show"></pop-up>
-<pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="hidePopUpLogin"></pop-up>
+<pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="!hidePopUpLogin"></pop-up>
 <app-footer></app-footer>

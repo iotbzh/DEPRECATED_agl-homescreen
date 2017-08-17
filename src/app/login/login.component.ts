@@ -1,6 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {AuthService} from "../auth/auth.service/index";
 import {Router, NavigationEnd} from "@angular/router";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'login',
@@ -13,7 +14,8 @@ export class LoginComponent implements OnInit {
   public username: string;
   public password: string;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private translate: TranslateService) {
+    translate.setDefaultLang('en');
   }
 
   ngOnInit() {

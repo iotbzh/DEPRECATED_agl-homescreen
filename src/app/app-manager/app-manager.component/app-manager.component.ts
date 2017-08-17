@@ -20,12 +20,13 @@ interface INotifier {
     styleUrls: ['app-manager.component.css']
 })
 export class AppManagerComponent implements OnInit, OnDestroy {
-    private apps: App[];
-    private account;
+    public apps: App[];
+    public account;
     private tmpAccount;
     public uploader: FileUploader;
-    private notifier: INotifier = { show: false };
-    private hidePopUpLogin: boolean = true;
+    public acceptFile //TODO Check
+    public notifier: INotifier = { show: false };
+    public hidePopUpLogin: boolean = true;
     private afCtx: AfbContextService;
 
     constructor(private afmMainService: AfmMainService,

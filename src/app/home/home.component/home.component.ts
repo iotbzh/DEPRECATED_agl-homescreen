@@ -8,9 +8,9 @@ import { AfmMainService } from "../../shared/afmMain.service";
   styleUrls: ['home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private account;
+  public account;
   private tmpAccount;
-  private hidePopUp: boolean = true;
+  public hidePopUpLogin: boolean = true;
 
   constructor(private aglIdentityService: AglIdentityService,
     public afmMainService: AfmMainService) {
@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       let account = response.account;
       if (this.account) {
         this.tmpAccount = account;
-        this.hidePopUp = false;
+        this.hidePopUpLogin = false;
       } else {
         this.account = account;
       }
@@ -44,11 +44,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   confirmLogin() {
     this.account = this.tmpAccount;
-    this.hidePopUp = true;
+    this.hidePopUpLogin = true;
   }
 
   cancelLogin() {
-    this.hidePopUp = true;
+    this.hidePopUpLogin = true;
   }
 
 }

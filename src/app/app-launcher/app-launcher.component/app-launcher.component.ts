@@ -16,11 +16,11 @@ interface INotifier {
     styleUrls: ['app-launcher.component.css']
 })
 export class AppLauncherComponent implements OnInit, OnDestroy {
-    private apps: App[];
-    private account;
+    public apps: App[];
+    public account;
     private tmpAccount;
-    private hidePopUp: boolean = true;
-    private notifier: INotifier = { show: false };
+    public hidePopUpLogin: boolean = true;
+    public notifier: INotifier = { show: false };
 
     public token: string;
 
@@ -88,7 +88,7 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
         this.aglIdentityService.loginResponse.subscribe((response: any) => {
             if (this.account) {
                 this.tmpAccount = response.account;
-                this.hidePopUp = false;
+                this.hidePopUpLogin = false;
             } else {
                 this.afmMainService.getRunnables();
             }
@@ -136,11 +136,11 @@ export class AppLauncherComponent implements OnInit, OnDestroy {
 
     confirmLogin() {
         this.account = this.tmpAccount;
-        this.hidePopUp = true;
+        this.hidePopUpLogin = true;
     }
 
     cancelLogin() {
-        this.hidePopUp = true;
+        this.hidePopUpLogin = true;
     }
 
     setDefaultIcon(app: App) {

@@ -11,12 +11,12 @@ export class HvacComponent implements OnInit, OnDestroy, WebSocketHandler {
   private url: string;
   private socket;
   private ws_sub_protos: [ "x-afb-ws-json1" ];
-  private leftFront: number = 0;
-  private leftRear: number = 0;
-  private rightFront: number = 0;
-  private rightRear: number = 0;
-  private speed: number = 0;
-  private mileage: number = 0;
+  public leftFront: number = 0;
+  public leftRear: number = 0;
+  public rightFront: number = 0;
+  public rightRear: number = 0;
+  public speed: number = 0;
+  public mileage: number = 0;
 
   constructor() {
     this.url = 'ws://' + environment.service.ip;

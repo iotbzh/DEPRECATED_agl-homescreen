@@ -10,8 +10,8 @@ import {AglIdentityService} from "../../shared/aglIdentity.service";
 export class EventEmitterComponent implements OnInit, OnDestroy {
   private url: string;
   // private socket;
-  private name: string;
-  private language: string = "";
+  public name: string;
+  public language: string = "";
 
   constructor(private aglIdentityService: AglIdentityService) {
     this.url = 'ws://' + environment.service.ip;

@@ -1,5 +1,8 @@
-export const environment: any = {
+export const environment = {
     production: true,
+    maxConnectionRetry: 10,
+
+    debug: false,                // enable console.debug statements
 
     session: { // Those data are updated by session service
         initial: '123456789',   // typical dev initial token

@@ -7,7 +7,7 @@ import {AglIdentityService} from "../aglIdentity.service";
   styleUrls: ['footer.component.css']
 })
 export class FooterComponent implements OnInit, OnDestroy{
-  private account;
+  public account;
 
   constructor(private aglIdentityService: AglIdentityService) {
   }

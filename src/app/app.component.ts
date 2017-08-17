@@ -1,9 +1,9 @@
 import {Component, OnInit, OnDestroy} from "@angular/core";
-import {TranslateService} from "ng2-translate";
+import {TranslateService} from "@ngx-translate/core";
 import {AglIdentityService} from "./shared/aglIdentity.service";
 
 @Component({
-  selector: 'app',
+  selector: 'app-root',
   template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent implements OnInit, OnDestroy {

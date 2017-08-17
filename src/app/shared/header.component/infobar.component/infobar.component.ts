@@ -6,12 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['infobar.component.css']
 })
 export class InfobarComponent implements OnInit {
-  private connections = [
+  public connections = [
     {isOn: true},
     {isOn: false},
     {isOn: true}
   ];
-  private now: Date = new Date();
+  public now: Date = new Date();
 
   constructor() {}
 

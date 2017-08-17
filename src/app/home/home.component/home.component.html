@@ -3,5 +3,5 @@
     <user-bar *ngIf="account" [(language)]="account.language" [(username)]="account.username"></user-bar>
     <h1>{{ 'HOME.TITLE' | translate }}</h1>
 </main>
-<pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="hidePopUpLogin"></pop-up>
+<pop-up title="POPUP.CONFIRM" [timeout]=30 (onCancel)="cancelPopupLogin()" (onConfirm)="confirmPopupLogin()" *ngIf="!hidePopUpLogin"></pop-up>
 <app-footer></app-footer>

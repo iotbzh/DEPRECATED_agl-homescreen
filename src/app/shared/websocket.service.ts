@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 
 import { WebSocketSubject } from "rxjs/observable/dom/WebSocketSubject";
-import { environment } from "../../environments/environment";
+import { environment } from '../../environments/environment';
 import { AfbContextService } from "./afbContext.service";
 
 export interface IOpened {

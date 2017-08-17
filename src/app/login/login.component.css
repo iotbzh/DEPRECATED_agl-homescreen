@@ -4,7 +4,7 @@
   align-items: center;
   height: 100%;
   padding: 1em 0.25em;
-  background: url("./assets/img/background.png") no-repeat;
+  background: url("/assets/img/background.png") no-repeat;
   background-size: 100%;
 }
 
