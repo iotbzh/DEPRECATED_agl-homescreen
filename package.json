@@ -1,5 +1,5 @@
 {
-  "name": "AGL-Homescreen",
+  "name": "agl-homescreen",
   "version": "0.0.1",
   "author": "Agemos Software <contact@agemos.fr> and Sébastien Douheret - IoT.bzh <sebastien.douheret@iot.bzh>",
   "description": "AGL HTML5 Homescreen",

@@ -13,7 +13,7 @@ export class AfbContextService {
     private _timeout: number;
     private _pingrate: number;
     private _ws: WebSocketService;
-    private _tmoInterval: number = null;
+    private _tmoInterval: any = null;
     private _service: any;
 
     // number of seconds that token will be refreshed before it will fire
