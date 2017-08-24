@@ -1,0 +1,112 @@
+  [class^="icon-"],
+  [class*=" icon-"] {
+      /* use !important to prevent issues with browser extensions that change fonts */
+      font-family: 'weather-font' !important;
+      speak: none;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      /* Better Font Rendering =========== */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+  }
+
+  .icon-cloud-moon-raindrops:before {
+      content: "\e900";
+  }
+
+  .icon-cloud-sun-raindrops:before {
+      content: "\e901";
+  }
+
+  .icon-cloud-raindrops:before {
+      content: "\e902";
+  }
+
+  .icon-cloud-moon-rain:before {
+      content: "\e903";
+  }
+
+  .icon-cloud-sun-rain:before {
+      content: "\e904";
+  }
+
+  .icon-cloud-rain:before {
+      content: "\e905";
+  }
+
+  .icon-umbrella:before {
+      content: "\e906";
+  }
+
+  html,
+  body {
+      height: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+      font-family: Roboto-Regular, "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+      letter-spacing: 2px;
+  }
+
+  main.page-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 100%;
+      width: auto;
+      text-align: center;
+      background: url("../img/content-background-car.png") no-repeat;
+      background-size: 100% 100%;
+      color: #FFFFFF;
+  }
+
+  .app-launcher {
+      display: inline-block;
+      width: 90px;
+      height: 90px;
+      background-size: 90px 90px;
+      border-radius: 50%;
+      position: relative;
+  }
+
+  .app-launcher.is-pressed::after {
+      content: '';
+      display: block;
+      background: rgba(70, 210, 210, .29);
+      background: linear-gradient(to top right, rgba(70, 210, 210, .29), rgba(138, 224, 211, 0.8));
+      width: 83px;
+      height: 84px;
+      border-radius: 50%;
+      position: absolute;
+      left: 4px;
+      top: 2px;
+  }
+
+  .btn-primary {
+      background-color: black;
+      color: #62fdb9;
+      padding: 10px;
+      border: solid 1px;
+      border-radius: 5px;
+      width: 40%;
+      outline: none;
+  }
+
+  footer {
+      height: 90px;
+      background: url("../img/footer-background.png") no-repeat;
+      background-size: 100% 100%;
+  }

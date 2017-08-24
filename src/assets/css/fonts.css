@@ -1,0 +1,12 @@
+@font-face {
+    font-family: Roboto-Regular;
+    src: url(../font/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'weather-font';
+    src: url('../font/weather-font.eot?agcdj5');
+    src: url('../font/weather-font.eot?agcdj5#iefix') format('embedded-opentype'), url('../font/weather-font.ttf?agcdj5') format('truetype'), url('../font/weather-font.woff?agcdj5') format('woff'), url('../font/weather-font.svg?agcdj5#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}

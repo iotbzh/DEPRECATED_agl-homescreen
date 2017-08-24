@@ -13,10 +13,9 @@ Install NodeJs *[not used on target]*
  sudo apt install nodejs
 ```
 
-Install building tools *[bower, gulp, ....]*
+Install building tools
 ```
- sudo npm install --global gulp-cli # this is not mandatory but it will make your life simpler
- sudo npm install --global bower    # same not mandatory but...
+ sudo npm install --global @angular/cli # Angular Command Line Interface
 ```
 
 ## Build project
@@ -34,24 +33,17 @@ cd agl-homescreen
 ### Install dependencies by running the following commands
 ```
 npm install
-bower update
 ```
 
-`node_modules` and `bower_components` directories will be created during the install.
+`node_modules` directory will be created during the install.
 
 ### Building the project in development mode
 
 #### Development mode on host with (fallback) dev-server
 
-  - Setup `gulp.config.js` file:
+  - Setup `sync` task in `package.json` file:
     ```
-    ...
-    deploy: {
-      target_ip: 'localhost',
-      port: '5000',
-      dir: 'agl-homescreen'
-    },
-    ....
+rsync -avrzh --rsh=\"ssh -p 4444 -l root\" ./dist/. root@localhost:agl-homescreen
     ```
 
   - Setup `src/environments/environment.ts` file:
@@ -66,8 +58,7 @@ bower update
     ```
   - Start compile code and start dev-server
     ```
-    gulp            # compile and start gulp watch for development
-    npm run server  # to start up dev-server (AKA fake server)
+    npm run start  # to start up dev-server (AKA fake server)
     ```
 
   - Open [http://localhost:8000](http://localhost:8000) in a browser.
@@ -107,20 +98,14 @@ You can use a real target (raspi3, porter, ...) or a qemu.
     | svr  |    TCP   |         |   8000    |          |    8000    |
 
 
-  - Setup `gulp.config.js` file accordingly:
+  - Setup `sync` task in `package.json` file:
     ```
-    ...
-    deploy: {
-      target_ip: '127.0.0.1',
-      port: '4444',
-      dir: 'agl-homescreen'
-    },
-    ....
+rsync -avrzh --rsh=\"ssh -p 4444 -l root\" ./dist/. root@localhost:agl-homescreen
     ```
 
   - Compile and and deploy code on target using:
   ```
-  gulp deploy
+  npm run deploy
   ```
 
   - Start app on target:
@@ -131,7 +116,7 @@ You can use a real target (raspi3, porter, ...) or a qemu.
     rpm -ihv af-main-binding-1.0-r0.core2_64.rpm
 
     # Start app on target
-    /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen --mode=remote --token=123456789 --roothttp=. --alias=/icons:/var/local/lib/afm/icons
+    /usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen --token=123456789 --roothttp=. --alias=/icons:/var/local/lib/afm/icons
     ```
 
  > NOTES: for old AGL version (previous DD version), command line should be:
@@ -152,21 +137,14 @@ You can use a real target (raspi3, porter, ...) or a qemu.
     bitbake agl-demo-platform
     runqemu qemux86-64
     ```
-
-  - Setup `gulp.config.js` file accordingly:
+  - Setup `sync` task in `package.json` file:
     ```
-    ...
-    deploy: {
-      target_ip: '192.168.7.2',     # must be depend on your qemu settings
-      port: null,
-      dir: 'agl-homescreen'
-    },
-    ....
+rsync -avrzh --rsh=\"ssh -l root\" ./dist/. root@192.168.7.2:agl-homescreen
     ```
 
   - Compile and and deploy code on target using:
     ```
-    gulp deploy
+    npm run deploy
     ```
 
   - Start app on target:
@@ -199,10 +177,6 @@ You can use a real target (raspi3, porter, ...) or a qemu.
 - implement getDetails to populate detailsApp
 - add a terminal (ssh like) to interact with target shell
 - Fix HVAC background image: it is not the right one
-- Rework gulpfile:
-  - prod mode: don't copy .map files
-  - fix gulp when IS_PRODUCTION = false;
-  - fix uglify and minify
 
 
 ### FAQ
@@ -224,5 +198,3 @@ export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
 
 - Building AGL image: [http://docs.iot.bzh/docs/getting_started/en/dev/](http://docs.iot.bzh/docs/getting_started/en/dev/)
 - AGL application framework documentation: [http://docs.iot.bzh/docs/apis_services/en/dev/reference/af-main/overview.html](http://docs.iot.bzh/docs/apis_services/en/dev/reference/af-main/overview.html)
-- building angular2 + rxjs app with gulp:
-[http://blog.scottlogic.com/2015/12/24/creating-an-angular-2-build.html](http://blog.scottlogic.com/2015/12/24/creating-an-angular-2-build.html)
