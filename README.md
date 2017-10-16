@@ -21,14 +21,13 @@ Install building tools
 ## Build project
 
 ### Clone the repository
-`git clone -b iotbzh https://github.com/iotbzh/agl-homescreen.git`
 
+`git clone -b iotbzh https://github.com/iotbzh/agl-homescreen.git`
 **Pay attention to use the *iotbzh* branch.**
 
 and navigate to `agl-homescreen` directory:
 ```
 cd agl-homescreen
-```
 
 ### Install dependencies by running the following commands
 ```
@@ -36,10 +35,25 @@ npm install
 ```
 
 `node_modules` directory will be created during the install.
+```
 
 ### Building the project in development mode
 
+### Connect to the board
+ls -altr /dev
+screen /dev/tty.usbserial-AK04WW00 115200
+root
+ip a
+
 #### Development mode on host with (fallback) dev-server
+### SSH
+
+ssh root@IP
+./launcher.sh
+
+/usr/bin/afb-daemon --port=8000 --rootdir=/home/root/agl-homescreen --token=123456789 --roothttp=. --alias=/icons:/var/local/lib/afm/icons &
+/usr/bin/google-chrome --mus --no-sandbox --test-type --kiosk http://localhost:8000
+
 
   - Setup `sync` task in `package.json` file:
     ```

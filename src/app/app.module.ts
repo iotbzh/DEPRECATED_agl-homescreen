@@ -29,6 +29,8 @@ import { AfbContextService } from "./shared/afbContext.service";
 import { AglIdentityService } from "./shared/aglIdentity.service";
 import { AfmMainService } from "./shared/afmMain.service";
 import { RemoveAppsPrefixPipe } from './remove-apps-prefix.pipe';
+import { SafePipe } from './safe.pipe';
+
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -73,7 +75,8 @@ export function createTranslateLoader(http: HttpClient) {
     SettingsDatetimeComponent,
     EventEmitterComponent,
     UserBarComponent,
-    RemoveAppsPrefixPipe
+    RemoveAppsPrefixPipe,
+    SafePipe
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
